@@ -66,7 +66,7 @@ class StoreModel(models.Model):
     price = models.PositiveIntegerField(verbose_name=_('price'), null=True)
     price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='store_price_type', null=True)
     use_for = models.ForeignKey(UseForModel, on_delete=models.CASCADE, null=True)
-    phoneNumber = models.PositiveIntegerField(verbose_name=_('phoneNumber'))
+    phoneNumber = models.IntegerField(verbose_name=_('phoneNumber'), default=0)
     address = models.CharField(max_length=400, verbose_name=_('address'), null=True)
     email = models.EmailField(verbose_name=_('email'))
     isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
