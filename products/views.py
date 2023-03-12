@@ -311,4 +311,4 @@ class GetHouseFavListAPIView(generics.ListAPIView):
 
 class RandomHouseModelAPIView(generics.ListAPIView):
     queryset = HouseModel.objects.order_by('?')
-    serializer_class = NewWebHomeCreateSerializer
+    serializer_class = NewAllWebHomeCreateSerializer
