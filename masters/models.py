@@ -31,7 +31,7 @@ class MasterModel(models.Model):
     owner = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='maklers', null=True)
     name = models.CharField(max_length=100, verbose_name=_('name'))
     email = models.EmailField(verbose_name=_('email'))
-    phone = models.PositiveIntegerField(verbose_name=_('phone'))
+    phone = models.IntegerField(verbose_name=_('phone'), default=0)
     password = models.CharField(verbose_name=_('password'), max_length=100)
     # address = models.ForeignKey(MapModel, on_delete=models.CASCADE, verbose_name=_('address'),
     #                             related_name='address', null=True)

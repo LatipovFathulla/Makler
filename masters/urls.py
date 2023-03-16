@@ -11,7 +11,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'api/v1/maklers/delete', MasterDestroyAPIView)
 router.register(r'api/v1/maklers/create', MasterCreateAPIView)
-router.register(r'api/v1/maklers/app-create', APPMasterCreateAPIView)
+# router.register(r'api/v1/maklers/app-create', APPMasterCreateAPIView)
 router.register(r'api/v1/maklers/wishlist-maklers', MasterUserWishlistModelView)
 
 urlpatterns = [

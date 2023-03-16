@@ -98,22 +98,22 @@ class MasterCreateAPIView(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = MasterCreateSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        user = request.user
-
-        if not user.is_authenticated:
-            return Response({"error": "User is not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
-
-        if not user.is_premium:
-            return Response({"error": "User is not premium"}, status=status.HTTP_403_FORBIDDEN)
-
-        data = request.data.copy()
-        data["is_premium"] = user.is_premium
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    # def create(self, request, *args, **kwargs):
+    #     user = request.user
+    #
+    #     if not user.is_authenticated:
+    #         return Response({"error": "User is not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+    #
+    #     if not user.is_premium:
+    #         return Response({"error": "User is not premium"}, status=status.HTTP_403_FORBIDDEN)
+    #
+    #     data = request.data.copy()
+    #     data["is_premium"] = user.is_premium
+    #     serializer = self.get_serializer(data=data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 def premium_required(view_func):
     @login_required
