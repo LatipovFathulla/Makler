@@ -313,7 +313,7 @@ class HomeUpdatePatchSerializer(serializers.ModelSerializer):
         model = HouseModel
         fields = ['id', 'draft', 'creator', 'product_status']
 
-        extra_kwargs = {"creator": {"read_only": True}}
+        # extra_kwargs = {"creator": {"read_only": True}}
 
 
 class NewWebHomeCreateSerializer(serializers.ModelSerializer):
