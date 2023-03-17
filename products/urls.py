@@ -14,8 +14,8 @@ router.register(r'api/v1/houses/delete', HouseDestroyAPIView)
 router.register(r'web/api/v1/web-houses/create', WebHomeCreateView)
 
 urlpatterns = [
-    path('api/v1/app-houses/', HouseListAPIView.as_view()),
-    path('api/v1/houses/app-create', APPHouseAddCreateAPIView.as_view()),
+    # path('api/v1/app-houses/', HouseListAPIView.as_view()),
+    # path('api/v1/houses/app-create', APPHouseAddCreateAPIView.as_view()),
     path('web/api/v1/all-web-houses/', WebHomeListAPIView.as_view()),
     path('api/v1/houses/updates/<int:pk>', HouseUpdateAPIView.as_view()),
     path('api/v1/houses/patch-updates/<int:pk>', PatchHouseUpdateAPIView.as_view()),
