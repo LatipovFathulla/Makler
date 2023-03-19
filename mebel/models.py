@@ -42,6 +42,7 @@ class MebelModel(models.Model):
         default=0,
         null=True
     )
+    isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):

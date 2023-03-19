@@ -11,6 +11,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+
+from masters.models import MasterModel
+from mebel.models import MebelModel
+from store.models import StoreModel
+from user.serializers import UserProductsSerializer
 from .models import ImagesModel, MapModel, PriceListModel, UserWishlistModel
 from rest_framework.decorators import parser_classes, api_view
 
@@ -109,11 +114,25 @@ class WebHomeListAPIView(ListAPIView):
 
 
 class AchiveProductListView(generics.ListAPIView):
-    serializer_class = NewAllWebHomeCreateSerializer
+    serializer_class = UserProductsSerializer
     permission_classes = [IsAuthenticated, ]
 
-    def get_queryset(self):
-        return HouseModel.objects.filter(product_status=3)
+    def get(self, request, *args, **kwargs):
+        houses = HouseModel.objects.filter(isBookmarked=True)
+        maklers = MasterModel.objects.filter(isBookmarked=True)
+        stores = StoreModel.objects.filter(isBookmarked=True)
+        mebels = MebelModel.objects.filter(isBookmarked=True)
+
+        serialized_data = UserProductsSerializer({
+            'houses': houses,
+            'maklers': maklers,
+            'stores': stores,
+            'mebels': mebels,
+        })
+
+        return Response(serialized_data.data)
+    # def get_queryset(self):
+    #     return HouseModel.objects.filter(product_status=3)
 
 
 class SearchWebHomeListAPIView(ListAPIView):
