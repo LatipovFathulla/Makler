@@ -316,6 +316,15 @@ class HomeUpdatePatchSerializer(serializers.ModelSerializer):
         # extra_kwargs = {"creator": {"read_only": True}}
 
 
+class HomeAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseModel
+
+        fields = ['isBookmarked',]
+
+        # extra_kwargs = {"creator": {"read_only": True}}
+
+
 class NewWebHomeCreateSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
@@ -452,4 +461,3 @@ class GetUserWishlistModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserWishlistModel
         fields = '__all__'
-

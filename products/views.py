@@ -20,7 +20,7 @@ from products.serializers import CategorySerializer, HomeSerializer, AmenitiesSe
     HomeDetailSerializer, HomeFavSerializer, HomeCreateSerializer, HomeImageSerializer, \
     WebAmenitiesSerializer, NewHomeCreateSerializer, WebPriceSerializer, NewWebHomeCreateSerializer, \
     PriceListSerializer, NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
-    GetUserWishlistModelSerializer, HomeUpdatePatchSerializer
+    GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer
 from products.utils import get_wishlist_data
 
 
@@ -102,17 +102,19 @@ class WebHomeListAPIView(ListAPIView):
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
 
-
     # def get_queryset(self):
     #     queryset = self.queryset
     #     change_model_field.delay()
     #     return queryset
+
+
 class AchiveProductListView(generics.ListAPIView):
     serializer_class = NewAllWebHomeCreateSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         return HouseModel.objects.filter(product_status=3)
+
 
 class SearchWebHomeListAPIView(ListAPIView):
     queryset = HouseModel.objects.all()
@@ -204,7 +206,6 @@ class HouseDetailAPIView(APIView):
         return Response(serializer.data)
 
 
-
 class WishlistHouseDetailAPIView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = HouseModel.objects.all()
     serializer_class = NewWebHomeCreateSerializer
@@ -265,6 +266,15 @@ class PatchHouseUpdateAPIView(generics.UpdateAPIView):
         return self.partial_update(request, *args, **kwargs)
 
 
+class AddWishlistHousePIView(generics.UpdateAPIView):
+    queryset = HouseModel.objects.all()
+    serializer_class = HomeAddSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+
 class HouseDestroyAPIView(mixins.DestroyModelMixin, GenericViewSet):
     queryset = HouseModel.objects.all()
     serializer_class = HomeCreateSerializer
@@ -289,15 +299,18 @@ class UserWishlistModelView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 #         return self.destroy(request, *args, **kwargs)
 
 class WishlistUserHouseDetailAPIView(ListAPIView):
-    queryset = UserWishlistModel.objects.all()
-    serializer_class = GetUserWishlistModelSerializer
+    queryset = HouseModel.objects.all()
+    serializer_class = NewAllWebHomeCreateSerializer
+    permission_classes = [IsAuthenticated, ]
 
-    def get_queryset(self, *args, **kwargs):
-        return (
-            super()
-                .get_queryset(*args, **kwargs)
-                .filter(user_id=self.kwargs.get('pk'))
-        )
+    def get_queryset(self):
+        return HouseModel.objects.filter(isBookmarked=True)
+    # def get_queryset(self, *args, **kwargs):
+    #     return (
+    #         super()
+    #             .get_queryset(*args, **kwargs)
+    #             .filter(user_id=self.kwargs.get('pk'))
+    #     )
 
     # def get(self, request, pk):
     #     # pk = self.kwargs.get("pk")
