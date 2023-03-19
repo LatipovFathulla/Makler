@@ -3,7 +3,8 @@ from rest_framework.routers import DefaultRouter
 from products.views import HouseListAPIView, HouseDetailAPIView, HouseAddCreateAPIView, \
     APPHouseAddCreateAPIView, HouseUpdateAPIView, HouseDestroyAPIView, WebHomeCreateView, WebHomeListAPIView, \
     WebAmenitiesListAPIView, SearchWebHomeListAPIView, WishlistHouseDetailAPIView, UserWishlistModelView, \
-    GetHouseFavListAPIView, RandomHouseModelAPIView, WishlistUserHouseDetailAPIView, PatchHouseUpdateAPIView
+    GetHouseFavListAPIView, RandomHouseModelAPIView, WishlistUserHouseDetailAPIView, PatchHouseUpdateAPIView, \
+    AchiveProductListView
 
 router = DefaultRouter()
 # router.register(r'api/v1/houses/create', HouseAddCreateAPIView)
@@ -22,6 +23,7 @@ urlpatterns = [
     path('web/api/v1/all-web-houses/popular', RandomHouseModelAPIView.as_view()),
     path('web/api/v1/web-houses/search/', SearchWebHomeListAPIView.as_view()),
     path('api/v1/houses/get-wishlist-houses', GetHouseFavListAPIView.as_view()),
+    path('api/v1/houses/archive', AchiveProductListView.as_view()),
     # path('api/v1/houses/delete-wishlist-houses/<int:pk>', UserWishlistDeleteView.as_view()),
     path('api/v1/houses/user-wishlist/<int:pk>', WishlistUserHouseDetailAPIView.as_view()),
     path('web/api/v1/houses/<int:pk>', HouseDetailAPIView.as_view()),

@@ -99,14 +99,20 @@ class WebHomeListAPIView(ListAPIView):
     filterset_fields = ['product_status', 'object', 'building_type', 'number_of_rooms',
                         'type', 'rental_type']
 
-    search_fields = ['web_address_title']
-    ordering_fields = ['price', 'created_at']
+    search_fields = ['title', 'web_address_title']
+    ordering_fields = ['id', 'price', 'created_at']
+
 
     # def get_queryset(self):
     #     queryset = self.queryset
     #     change_model_field.delay()
     #     return queryset
+class AchiveProductListView(generics.ListAPIView):
+    serializer_class = NewAllWebHomeCreateSerializer
+    permission_classes = [IsAuthenticated, ]
 
+    def get_queryset(self):
+        return HouseModel.objects.filter(product_status=3)
 
 class SearchWebHomeListAPIView(ListAPIView):
     queryset = HouseModel.objects.all()
@@ -196,6 +202,7 @@ class HouseDetailAPIView(APIView):
         houses.save()
         serializer = NewAllWebHomeCreateSerializer(houses, context={'request': request}, )
         return Response(serializer.data)
+
 
 
 class WishlistHouseDetailAPIView(mixins.UpdateModelMixin, GenericViewSet):
