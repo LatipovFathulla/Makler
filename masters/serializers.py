@@ -65,11 +65,11 @@ class UpdSerializer(serializers.ModelSerializer):
 
 class UpdMasterCreateSerializer(serializers.ModelSerializer):
     # profession = MasterProfessionModelSerializer(many=True)
-    # images = MasterImageSerializer(many=True, read_only=True)
-    # uploaded_images = serializers.ListField(
-    #     child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
-    #     write_only=True
-    # )
+    images = MasterImageSerializer(many=True, read_only=True)
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
+        write_only=True, required=False
+    )
     password = serializers.CharField(write_only=True, required=False, )
 
     # address = AddressModelSerializer()
@@ -77,10 +77,34 @@ class UpdMasterCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = MasterModel
         fields = ['name', 'email', 'phone', 'avatar', 'address_title', 'address_latitude', 'address_longitude',
-                  'password', 'profession', 'how_service',
+                  'password', 'profession', 'how_service', 'images', 'uploaded_images',
                   'descriptions', 'experience', 'owner',
                   ]
         extra_kwargs = {"owner": {"read_only": True}}
+
+    def update(self, instance, validated_data):
+        uploaded_images = validated_data.pop('uploaded_images', None)
+        # получаем новые изображения из запроса
+        if uploaded_images:
+            # если были загружены новые изображения, то сохраняем их
+            instance.images.all().delete()  # удаляем старые изображения
+            for image in uploaded_images:
+                MasterImagesModel.objects.create(master=instance, images=image)
+        else:
+            # если новые изображения не загружались, то сохраняем старые изображения
+            # validated_data.pop('images', None)
+            # instance.images.all().update(**validated_data.pop('images')[0])
+            images_data = validated_data.pop('images', None)
+            if images_data:
+                instance.images.all().update(**images_data[0])
+        return super().update(instance, validated_data)
+    # def update(self, instance, validated_data):
+    #     if 'uploaded_images' not in validated_data:
+    #         validated_data['uploaded_images'] = instance.uploaded_images
+    #
+    #         # Update the model instance with the validated data
+    #         instance = super().update(instance, validated_data)
+    #         return instance
 
 
 # create master POST
