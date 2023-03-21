@@ -146,6 +146,14 @@ class UserList(APIView):
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
 
+class NewUserList(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk):
+        users = CustomUser.objects.get(id=pk)
+        serializer = UserSerializer(users, context={'request': request})
+        return Response(serializer.data)
+
 class UserProductsList(APIView):
     permission_classes = (IsAuthenticated,)
 
