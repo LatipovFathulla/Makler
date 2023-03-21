@@ -87,25 +87,15 @@ class UpdMasterCreateSerializer(serializers.ModelSerializer):
         # получаем новые изображения из запроса
         if uploaded_images:
             # если были загружены новые изображения, то сохраняем их
-            instance.images.all().delete()  # удаляем старые изображения
+            instance.images.all().delete()
             for image in uploaded_images:
                 MasterImagesModel.objects.create(master=instance, images=image)
         else:
-            # если новые изображения не загружались, то сохраняем старые изображения
-            # validated_data.pop('images', None)
-            # instance.images.all().update(**validated_data.pop('images')[0])
+
             images_data = validated_data.pop('images', None)
             if images_data:
                 instance.images.all().update(**images_data[0])
         return super().update(instance, validated_data)
-    # def update(self, instance, validated_data):
-    #     if 'uploaded_images' not in validated_data:
-    #         validated_data['uploaded_images'] = instance.uploaded_images
-    #
-    #         # Update the model instance with the validated data
-    #         instance = super().update(instance, validated_data)
-    #         return instance
-
 
 # create master POST
 class MasterCreateSerializer(serializers.ModelSerializer):
