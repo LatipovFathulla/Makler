@@ -118,10 +118,10 @@ class AchiveProductListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        houses = HouseModel.objects.filter(isBookmarked=True)
-        maklers = MasterModel.objects.filter(isBookmarked=True)
-        stores = StoreModel.objects.filter(isBookmarked=True)
-        mebels = MebelModel.objects.filter(isBookmarked=True)
+        houses = HouseModel.objects.filter(product_status=3)
+        maklers = MasterModel.objects.filter(product_status=3)
+        stores = StoreModel.objects.filter(product_status=3)
+        mebels = MebelModel.objects.filter(product_status=3)
 
         serialized_data = UserProductsSerializer({
             'houses': houses,
