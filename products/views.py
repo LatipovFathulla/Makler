@@ -128,7 +128,7 @@ class AchiveProductListView(generics.ListAPIView):
             'maklers': maklers,
             'stores': stores,
             'mebels': mebels,
-        })
+        }, context={'request': request})
 
         return Response(serialized_data.data)
     # def get_queryset(self):
