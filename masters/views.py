@@ -115,15 +115,15 @@ class MasterCreateAPIView(mixins.CreateModelMixin, GenericViewSet):
     #     headers = self.get_success_headers(serializer.data)
     #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-def premium_required(view_func):
-    @login_required
-    def _wrapped_view_func(request, *args, **kwargs):
-        account = get_object_or_404(CustomUser, user=request.user)
-        if not account.is_premium:
-            raise PermissionDenied
-        return view_func(request, *args, **kwargs)
-
-    return _wrapped_view_func
+# def premium_required(view_func):
+#     @login_required
+#     def _wrapped_view_func(request, *args, **kwargs):
+#         account = get_object_or_404(CustomUser, user=request.user)
+#         if not account.is_premium:
+#             raise PermissionDenied
+#         return view_func(request, *args, **kwargs)
+#
+#     return _wrapped_view_func
 
 
 class MasterTestAPIView(APIView):
