@@ -154,6 +154,7 @@ class NewUserList(APIView):
         serializer = UserSerializer(users, context={'request': request})
         return Response(serializer.data)
 
+
 class UserProductsList(APIView):
     permission_classes = (IsAuthenticated,)
 

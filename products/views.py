@@ -11,6 +11,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from django.db.models import Q
 
 from masters.models import MasterModel
 from mebel.models import MebelModel
@@ -323,7 +324,8 @@ class WishlistUserHouseDetailAPIView(ListAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
-        return HouseModel.objects.filter(isBookmarked=True)
+        pk = self.kwargs.get('pk')
+        return HouseModel.objects.filter(Q(isBookmarked=True) & Q(creator_id=pk))
     # def get_queryset(self, *args, **kwargs):
     #     return (
     #         super()

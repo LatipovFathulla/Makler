@@ -130,6 +130,17 @@ class UserProductsSerializer(serializers.ModelSerializer):
         return self.context['request'].build_absolute_uri(obj.image.url)
 
 
+class MUserProductsSerializer(serializers.ModelSerializer):
+    houses = NewAllWebHomeCreateSerializer(many=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['houses',]
+
+    def get_image_url(self, obj):
+        # obj is the HouseModel/MasterModel/StoreModel/MebelModel instance
+        return self.context['request'].build_absolute_uri(obj.image.url)
+
 class UpdateUserSerializer(serializers.ModelSerializer):
     # email = serializers.EmailField(required=False)
 
