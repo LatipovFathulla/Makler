@@ -115,12 +115,12 @@ class WebHomeListAPIView(ListAPIView):
 
 
 class ArchiveProductListView(generics.ListAPIView):
+    queryset = HouseModel.objects.all()
     serializer_class = UserProductsSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-
-        houses = HouseModel.objects.filter(product_status=3, creator=request.user)
+        houses = HouseModel.objects.filter(product_status=3)
         maklers = MasterModel.objects.filter(product_status=3)
         stores = StoreModel.objects.filter(product_status=3)
         mebels = MebelModel.objects.filter(product_status=3)
