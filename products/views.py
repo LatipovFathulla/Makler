@@ -114,12 +114,13 @@ class WebHomeListAPIView(ListAPIView):
     #     return queryset
 
 
-class AchiveProductListView(generics.ListAPIView):
+class ArchiveProductListView(generics.ListAPIView):
     serializer_class = UserProductsSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, *args, **kwargs):
-        houses = HouseModel.objects.filter(product_status=3)
+
+        houses = HouseModel.objects.filter(product_status=3, creator=request.user)
         maklers = MasterModel.objects.filter(product_status=3)
         stores = StoreModel.objects.filter(product_status=3)
         mebels = MebelModel.objects.filter(product_status=3)
@@ -273,13 +274,11 @@ class HouseUpdateAPIView(generics.RetrieveUpdateAPIView):
 class PatchHouseUpdateAPIView(generics.UpdateAPIView):
     queryset = HouseModel.objects.all()
     serializer_class = HomeUpdatePatchSerializer
+    permission_classes = [IsAuthenticated, ]
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['draft'] = True
         kwargs['product_status'] = 3
-        creator = self.request.user
-        print(creator)
-        kwargs['creator'] = creator
         return self.update(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):

@@ -21,7 +21,7 @@ class MebelModel(models.Model):
     title = models.CharField(max_length=400, verbose_name=_('title'))
     category = models.ForeignKey(MebelCategoryModel, on_delete=models.CASCADE, null=True)
     price = models.IntegerField(verbose_name=_('price'), null=True)
-    phone_number = models.IntegerField(verbose_name=_('phone_number'), null=True)
+    phone_number = models.CharField(max_length=30, verbose_name=_('phone_number'), null=True)
     web_address_title = models.CharField(max_length=400, verbose_name=_('web_address_title'), null=True)
     web_address_latitude = models.FloatField(verbose_name=_('web_address_latitude'), null=True)
     web_address_longtitude = models.FloatField(verbose_name=_('web_address_longtitude'), null=True)
