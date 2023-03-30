@@ -2,31 +2,28 @@ from django.http import JsonResponse, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, mixins, status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import ListAPIView, CreateAPIView
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import GenericViewSet
 from django.db.models import Q
+from django.urls import reverse
 
 from masters.models import MasterModel
 from mebel.models import MebelModel
 from store.models import StoreModel
 from user.serializers import UserProductsSerializer
-from .models import ImagesModel, MapModel, PriceListModel, UserWishlistModel
-from rest_framework.decorators import parser_classes, api_view
+from .models import PriceListModel, UserWishlistModel
+from rest_framework.decorators import api_view
 
-from products.helpers import modify_input_for_multiple_files
-from products.models import CategoryModel, HouseModel, AmenitiesModel, HouseImageModel
+from products.models import CategoryModel, HouseModel, AmenitiesModel
 from products.serializers import CategorySerializer, HomeSerializer, AmenitiesSerializer, \
-    HomeDetailSerializer, HomeFavSerializer, HomeCreateSerializer, HomeImageSerializer, \
+    HomeFavSerializer, HomeCreateSerializer, \
     WebAmenitiesSerializer, NewHomeCreateSerializer, WebPriceSerializer, NewWebHomeCreateSerializer, \
-    PriceListSerializer, NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
-    GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer
+    NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
+    GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer, ProductLinkSerializer
 from products.utils import get_wishlist_data
 
 
@@ -352,3 +349,14 @@ class GetHouseFavListAPIView(generics.ListAPIView):
 class RandomHouseModelAPIView(generics.ListAPIView):
     queryset = HouseModel.objects.order_by('?')
     serializer_class = NewAllWebHomeCreateSerializer
+
+
+class ProductLinkView(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            product = HouseModel.objects.get(pk=pk)
+        except HouseModel.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductLinkSerializer(product, context={'request': request})
+        return Response(serializer.data)

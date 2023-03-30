@@ -4,7 +4,7 @@ from products.views import HouseListAPIView, HouseDetailAPIView, HouseAddCreateA
     APPHouseAddCreateAPIView, HouseUpdateAPIView, HouseDestroyAPIView, WebHomeCreateView, WebHomeListAPIView, \
     WebAmenitiesListAPIView, SearchWebHomeListAPIView, WishlistHouseDetailAPIView, UserWishlistModelView, \
     GetHouseFavListAPIView, RandomHouseModelAPIView, WishlistUserHouseDetailAPIView, PatchHouseUpdateAPIView, \
-    ArchiveProductListView, AddWishlistHousePIView
+    ArchiveProductListView, AddWishlistHousePIView, ProductLinkView
 
 router = DefaultRouter()
 # router.register(r'api/v1/houses/create', HouseAddCreateAPIView)
@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/v1/houses/user-wishlist/<int:pk>', WishlistUserHouseDetailAPIView.as_view()),
     path('web/api/v1/houses/<int:pk>', HouseDetailAPIView.as_view()),
     path('api/v1/web-houses/amenities/', WebAmenitiesListAPIView.as_view()),
+    path('web/api/v1/housess/<int:pk>', ProductLinkView.as_view(), name='product_detail'),
     # path('api/v1/houses/image/', HouseImageAPIView.as_view()),
 ]
 

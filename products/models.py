@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -203,6 +204,9 @@ class HouseModel(models.Model):
     def get_from_wishlist(request):
         wishlist = request.session.get('wishlist', [])
         return HouseModel.objects.filter(pk__in=wishlist)
+
+    def get_absolute_url(self):
+        return reverse('product_detail', args=[str(self.id)])
 
     # @property
     # def choices(self):

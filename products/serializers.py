@@ -461,3 +461,15 @@ class GetUserWishlistModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserWishlistModel
         fields = '__all__'
+
+
+class ProductLinkSerializer(serializers.ModelSerializer):
+    link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = HouseModel
+        fields = ('id', 'link')
+
+    def get_link(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.get_absolute_url())
