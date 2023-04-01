@@ -12,8 +12,12 @@ from django.db.models import Q
 from django.urls import reverse
 
 from masters.models import MasterModel
+from masters.serializers import MasterSerializer
 from mebel.models import MebelModel
+from mebel.serializers import AllMebelSerializer
 from store.models import StoreModel
+from store.serializers import ProfileStoreModelSerializer
+from user.models import CustomUser
 from user.serializers import UserProductsSerializer
 from .models import PriceListModel, UserWishlistModel
 from rest_framework.decorators import api_view
@@ -111,25 +115,62 @@ class WebHomeListAPIView(ListAPIView):
     #     return queryset
 
 
-class ArchiveProductListView(generics.ListAPIView):
-    queryset = HouseModel.objects.all()
-    serializer_class = UserProductsSerializer
-    permission_classes = [IsAuthenticated, ]
+# class ArchiveProductListView(ListAPIView):
+#     serializer_class = NewAllWebHomeCreateSerializer
+#     permission_classes = [IsAuthenticated, ]
+#
+#     def get_queryset(self):
+#         user_id = self.kwargs.get('user_id')
+#         user = self.request.user
+#         if user.is_authenticated:
+#             return HouseModel.objects.filter(product_status=3, creator_id=user_id)
+#         else:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, *args, **kwargs):
-        houses = HouseModel.objects.filter(product_status=3)
-        maklers = MasterModel.objects.filter(product_status=3)
-        stores = StoreModel.objects.filter(product_status=3)
-        mebels = MebelModel.objects.filter(product_status=3)
+class ArchiveProductListView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-        serialized_data = UserProductsSerializer({
-            'houses': houses,
-            'maklers': maklers,
-            'stores': stores,
-            'mebels': mebels,
-        }, context={'request': request})
+    def get(self, request, pk):
+        user = CustomUser.objects.get(id=pk)
+        houses = HouseModel.objects.filter(creator_id=user, product_status=3)
+        stores = StoreModel.objects.filter(creator_id=user, product_status=3)
+        masters = MasterModel.objects.filter(owner_id=user, product_status=3)
+        mebels = MebelModel.objects.filter(creator_id=user, product_status=3)
 
-        return Response(serialized_data.data)
+        houses_serializer = NewAllWebHomeCreateSerializer(houses, many=True, context={'request': request})
+        stores_serializer = ProfileStoreModelSerializer(stores, many=True, context={'request': request})
+        masters_serializer = MasterSerializer(masters, many=True, context={'request': request})
+        mebels_serializer = AllMebelSerializer(mebels, many=True, context={'request': request})
+
+        response_data = {
+            'houses': houses_serializer.data,
+            'stores': stores_serializer.data,
+            'masters': masters_serializer.data,
+            'mebels': mebels_serializer.data,
+        }
+
+        return Response(response_data)
+# class ArchiveProductListView(generics.ListAPIView):
+#     serializer_class = NewAllWebHomeCreateSerializer
+#     permission_classes = [IsAuthenticated, ]
+#
+#     def get_queryset(self):
+#         user = self.request.user
+#         return HouseModel.objects.filter(product_status=3, creator=user)
+    # def get(self, request, *args, **kwargs):
+    #     houses = HouseModel.objects.filter(product_status=3)
+    #     maklers = MasterModel.objects.filter(product_status=3)
+    #     stores = StoreModel.objects.filter(product_status=3)
+    #     mebels = MebelModel.objects.filter(product_status=3)
+    #
+    #     serialized_data = UserProductsSerializer({
+    #         'houses': houses,
+    #         'maklers': maklers,
+    #         'stores': stores,
+    #         'mebels': mebels,
+    #     }, context={'request': request})
+    #
+    #     return Response(serialized_data.data)
     # def get_queryset(self):
     #     return HouseModel.objects.filter(product_status=3)
 
