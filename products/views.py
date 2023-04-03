@@ -328,6 +328,11 @@ class AddWishlistHousePIView(generics.UpdateAPIView):
     serializer_class = HomeAddSerializer
     permission_classes = [IsAuthenticated, ]
 
+    def partial_update(self, request, *args, **kwargs):
+        isBookmarked = request.data.get('isBookmarked', False)
+        kwargs['isBookmarked'] = isBookmarked
+        return self.update(request, *args, **kwargs)
+
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
@@ -355,14 +360,30 @@ class UserWishlistModelView(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 #     def delete(self, request, *args, **kwargs):
 #         return self.destroy(request, *args, **kwargs)
 
-class WishlistUserHouseDetailAPIView(ListAPIView):
-    queryset = HouseModel.objects.all()
-    serializer_class = NewAllWebHomeCreateSerializer
-    permission_classes = [IsAuthenticated, ]
+class WishlistUserHouseDetailAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        pk = self.kwargs.get('pk')
-        return HouseModel.objects.filter(Q(isBookmarked=True) & Q(creator_id=pk))
+    def get(self, request, pk):
+        user = CustomUser.objects.get(id=pk)
+        houses = HouseModel.objects.filter(creator_id=user, isBookmarked=True)
+        stores = StoreModel.objects.filter(creator_id=user, isBookmarked=True)
+        masters = MasterModel.objects.filter(owner_id=user, isBookmarked=True)
+        mebels = MebelModel.objects.filter(creator_id=user, isBookmarked=True)
+
+        houses_serializer = NewAllWebHomeCreateSerializer(houses, many=True, context={'request': request})
+        stores_serializer = ProfileStoreModelSerializer(stores, many=True, context={'request': request})
+        masters_serializer = MasterSerializer(masters, many=True, context={'request': request})
+        mebels_serializer = AllMebelSerializer(mebels, many=True, context={'request': request})
+
+        response_data = {
+            'houses': houses_serializer.data,
+            'stores': stores_serializer.data,
+            'masters': masters_serializer.data,
+            'mebels': mebels_serializer.data,
+        }
+
+        return Response(response_data)
+
     # def get_queryset(self, *args, **kwargs):
     #     return (
     #         super()
