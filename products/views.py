@@ -412,9 +412,3 @@ class RandomHouseModelAPIView(generics.ListAPIView):
     queryset = HouseModel.objects.order_by('?')
     serializer_class = NewAllWebHomeCreateSerializer
 
-
-class ProductShareLinkAPIView(APIView):
-    def get(self, request, product_id):
-        product = HouseModel.objects.get(pk=product_id)
-        share_link = request.build_absolute_uri(reverse('product_detail', args=[product_id]))
-        return Response({'share_link': share_link})

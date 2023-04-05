@@ -289,6 +289,7 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
     price_type = PriceListSerializer()
     how_sale = NewWebHowSaleSerializer()
     type = HouseTypeSerializer
+    link = serializers.SerializerMethodField()
 
     # rental_type = HouseRentalTypeSerializer
 
@@ -303,9 +304,20 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
                   'number_of_rooms', 'floor', 'floor_from', 'building_type',
                   'typeOfRent', 'typeOfHouse', 'typeOfObject',
                   'app_ipoteka', 'app_mebel', 'app_new_building',
-                  'amenities', 'phone_number', 'youtube_link', 'how_sale',
+                  'amenities', 'phone_number', 'youtube_link', 'how_sale', 'link',
                   'isBookmarked', 'draft', 'product_status', 'view_count', 'created_at',
                   ]
+
+    def get_link(self, obj):
+        request = self.context.get('request')
+        if request is not None:
+            return request.build_absolute_uri()
+        return ''
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['link'] = self.get_link(instance)
+        return ret
 
 
 class HomeUpdatePatchSerializer(serializers.ModelSerializer):
