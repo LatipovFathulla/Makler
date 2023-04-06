@@ -1,15 +1,9 @@
-from django.shortcuts import get_object_or_404
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
-from rest_framework.decorators import action
+import os
 
-from masters.serializers import MasterSerializer
-from products.helpers import modify_input_for_multiple_files
+from makler import settings
 from products.models import CategoryModel, HouseModel, AmenitiesModel, MapModel, HouseImageModel, ImagesModel, \
     NewHouseImages, PriceListModel, HowSaleModel, UserWishlistModel
-from store.serializers import StoreModelSerializer
-from user.models import CustomUser
-
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,7 +55,7 @@ class HomeImageSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewHouseImages
-        fields = ['images']
+        fields = ['id', 'images']
 
     def get_img_url(self, obj):
         return self.context['request'].build_absolute_url(obj.image.url)
@@ -320,6 +314,31 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
         return ret
 
 
+class HomeImageDeleteSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True, read_only=True)
+    uploaded_images = serializers.CharField(max_length=1000, write_only=True)
+    # other fields
+
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = HouseModel
+        fields = ['id', 'images', 'uploaded_images', 'image_url']
+
+    def get_image_url(self, obj):
+        if obj.images.exists():
+            return self.context['request'].build_absolute_uri(obj.images.first().images.url)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        image_url = request.data.get('uploaded_images')
+        image_name = os.path.basename(image_url)
+        image_path = os.path.join(settings.MEDIA_ROOT, image_name)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        return super().destroy(request, *args, **kwargs)
+
+
 class HomeUpdatePatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseModel
@@ -332,7 +351,7 @@ class HomeAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseModel
 
-        fields = ['isBookmarked',]
+        fields = ['isBookmarked', ]
 
         # extra_kwargs = {"creator": {"read_only": True}}
 

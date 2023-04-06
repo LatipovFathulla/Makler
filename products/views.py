@@ -2,7 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, mixins, status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, DestroyAPIView, get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -19,7 +19,7 @@ from store.models import StoreModel
 from store.serializers import ProfileStoreModelSerializer
 from user.models import CustomUser
 from user.serializers import UserProductsSerializer
-from .models import PriceListModel, UserWishlistModel
+from .models import PriceListModel, UserWishlistModel, NewHouseImages
 from rest_framework.decorators import api_view
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel
@@ -412,3 +412,24 @@ class RandomHouseModelAPIView(generics.ListAPIView):
     queryset = HouseModel.objects.order_by('?')
     serializer_class = NewAllWebHomeCreateSerializer
 
+
+class HouseImageDestroyView(DestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = NewHouseImages.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        product_id = self.kwargs.get('product_id')
+        image_id = self.kwargs.get('image_id')
+        image_url = self.request.data.get('image_url')
+
+        # get the image instance
+        image = get_object_or_404(NewHouseImages, id=image_id, product_id=product_id)
+
+        # delete the image from the storage
+        storage, path = image.images.storage, image.images.path
+        storage.delete(path)
+
+        # delete the image instance from the database
+        image.delete()
+
+        return Response({'detail': 'Image deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
