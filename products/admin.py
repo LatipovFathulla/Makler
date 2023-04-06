@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel, MapModel, \
-    HouseImageModel, PriceListModel, HowSaleModel, UserWishlistModel
+    HouseImageModel, PriceListModel, HowSaleModel, UserWishlistModel, NewHouseImages
 
 
 @admin.register(CategoryModel)
@@ -40,11 +40,19 @@ class MapModelAdmin(admin.ModelAdmin):
     list_filter = ['created_at']
 
 
-@admin.register(HouseImageModel)
-class HouseImageModelAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'image', 'created_at']
-    search_fields = ['created_at']
-    list_filter = ['created_at']
+# @admin.register(HouseImageModel)
+# class HouseImageModelAdmin(admin.ModelAdmin):
+#     list_display = ['pk', 'image', 'created_at']
+#     search_fields = ['created_at']
+#     list_filter = ['created_at']
+
+# @admin.register(NewHouseImages)
+# class NewHouseImagesAdmin(admin.ModelAdmin):
+#     list_display = ['pk', 'product', 'images']
+
+class NewHouseImagesInline(admin.TabularInline):
+    model = NewHouseImages
+    extra = 1
 
 
 @admin.register(HouseModel)
@@ -52,6 +60,7 @@ class HouseModelAdmin(admin.ModelAdmin):
     list_display = ['pk', 'title', 'price', 'category', 'type', 'product_status', 'created_at']
     search_fields = ['title', 'type']
     list_filter = ['created_at']
+    inlines = [NewHouseImagesInline]
     save_as = True
     save_on_top = True
 

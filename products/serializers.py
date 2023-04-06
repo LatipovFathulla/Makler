@@ -296,7 +296,6 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
                   'web_address_title', 'web_address_latitude', 'web_address_longtitude',
                   'pm_general', 'pm_residential', 'images', 'uploaded_images',
                   'number_of_rooms', 'floor', 'floor_from', 'building_type',
-                  'typeOfRent', 'typeOfHouse', 'typeOfObject',
                   'app_ipoteka', 'app_mebel', 'app_new_building',
                   'amenities', 'phone_number', 'youtube_link', 'how_sale', 'link',
                   'isBookmarked', 'draft', 'product_status', 'view_count', 'created_at',

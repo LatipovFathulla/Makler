@@ -85,11 +85,11 @@ class HouseModel(models.Model):
     view_count = models.PositiveIntegerField(default=0, null=True)
     descriptions = models.TextField(verbose_name=_('descriptions'))
     price = models.CharField(max_length=100, verbose_name=_('price'))
-    app_currency = models.CharField(max_length=10, verbose_name=_('app_currency'), null=True)
-    app_type = models.CharField(max_length=80, verbose_name=_('app_type'), null=True)
-    typeOfRent = models.CharField(max_length=90, verbose_name=_('typeOfRent'), null=True)
-    typeOfHouse = models.CharField(max_length=90, verbose_name=_('typeOfHouse'), null=True)
-    typeOfObject = models.CharField(max_length=90, null=True)
+    # app_currency = models.CharField(max_length=10, verbose_name=_('app_currency'), null=True)
+    # app_type = models.CharField(max_length=80, verbose_name=_('app_type'), null=True)
+    # typeOfRent = models.CharField(max_length=90, verbose_name=_('typeOfRent'), null=True)
+    # typeOfHouse = models.CharField(max_length=90, verbose_name=_('typeOfHouse'), null=True)
+    # typeOfObject = models.CharField(max_length=90, null=True)
     app_ipoteka = models.BooleanField(default=False, null=True)
     app_mebel = models.BooleanField(default=False, null=True)
     app_new_building = models.BooleanField(default=False, null=True)
@@ -112,11 +112,11 @@ class HouseModel(models.Model):
     web_address_longtitude = models.FloatField(verbose_name=_('web_address_longtitude'), null=True)
     how_sale = models.ForeignKey(HowSaleModel, on_delete=models.CASCADE, null=True, blank=True)
     pm_general = models.CharField(max_length=400, verbose_name=_('pm_general'), null=True)
-    web_type = models.CharField(max_length=400, verbose_name=_('web_type'), null=True)
-    web_rental_type = models.CharField(max_length=400, verbose_name=_('web_rental_type'), null=True)
+    # web_type = models.CharField(max_length=400, verbose_name=_('web_type'), null=True)
+    # web_rental_type = models.CharField(max_length=400, verbose_name=_('web_rental_type'), null=True)
     pm_residential = models.CharField(max_length=500, verbose_name=_('pm_kitchen'), null=True)
     pm_kitchen = models.CharField(max_length=300, verbose_name=_('pm_kitchen2'), null=True)
-    web_building_type = models.CharField(max_length=600, verbose_name=_('web_building_type'), null=True)
+    # web_building_type = models.CharField(max_length=600, verbose_name=_('web_building_type'), null=True)
     RENTAL_TYPE = (
         ('длительно', 'Длительно'),
         ('несколько месяцев', 'несколько месяцев'),
@@ -149,7 +149,7 @@ class HouseModel(models.Model):
         null=True,
         blank=True,
     )
-    address = models.ForeignKey(MapModel, on_delete=models.CASCADE, verbose_name=_('address'), null=True)
+    # address = models.ForeignKey(MapModel, on_delete=models.CASCADE, verbose_name=_('address'), null=True)
     property_type = models.CharField(
         max_length=100,
         choices=PROPERTY_TYPE,
@@ -157,9 +157,9 @@ class HouseModel(models.Model):
         null=True
     )
     # images = models.ManyToManyField(ImagesModel, null=True, blank=True)
-    image = models.ImageField(upload_to='Product/APi', null=True)
-    general = models.CharField(max_length=90, verbose_name=_('general'))
-    residential = models.CharField(max_length=90, verbose_name=_('residential'))
+    # image = models.ImageField(upload_to='Product/APi', null=True)
+    # general = models.CharField(max_length=90, verbose_name=_('general'))
+    # residential = models.CharField(max_length=90, verbose_name=_('residential'))
     number_of_rooms = models.CharField(max_length=30, verbose_name=_('number_of_rooms'))
     floor = models.CharField(max_length=30, verbose_name=_('floor'))
     floor_from = models.CharField(max_length=30, verbose_name=_('floor_from'))
