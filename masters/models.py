@@ -34,8 +34,6 @@ class MasterModel(models.Model):
     email = models.EmailField(verbose_name=_('email'))
     phone = models.CharField(max_length=30, verbose_name=_('phone'), default=0)
     password = models.CharField(verbose_name=_('password'), max_length=100)
-    # address = models.ForeignKey(MapModel, on_delete=models.CASCADE, verbose_name=_('address'),
-    #                             related_name='address', null=True)
     address_title = models.CharField(max_length=300, verbose_name=_('address_title'), null=True)
     address_latitude = models.FloatField(max_length=90, verbose_name=_('address_latitude'), null=True)
     address_longitude = models.FloatField(max_length=90, verbose_name=_('address_longitude'), null=True)

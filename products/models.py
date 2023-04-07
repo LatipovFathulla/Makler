@@ -139,7 +139,6 @@ class HouseModel(models.Model):
         blank=True,
         verbose_name=_('Object')
     )
-    # address = models.ForeignKey(MapModel, on_delete=models.CASCADE, verbose_name=_('address'), null=True)
     property_type = models.CharField(
         max_length=100,
         choices=PROPERTY_TYPE,
