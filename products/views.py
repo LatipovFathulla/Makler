@@ -8,9 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from django.db.models import Q
-from django.urls import reverse
-
+from django.utils.translation import activate
 from masters.models import MasterModel
 from masters.serializers import MasterSerializer
 from mebel.models import MebelModel
@@ -109,6 +107,11 @@ class WebHomeListAPIView(ListAPIView):
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
 
+    def dispatch(self, request, *args, **kwargs):
+        # Определяем язык перед вызовом view
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем язык из заголовка Accept-Language
+        activate(language)
+        return super().dispatch(request, *args, **kwargs)
     # def get_queryset(self):
     #     queryset = self.queryset
     #     change_model_field.delay()
