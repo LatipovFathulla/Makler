@@ -24,7 +24,7 @@ from rest_framework.decorators import api_view
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel
 from products.serializers import CategorySerializer, HomeSerializer, AmenitiesSerializer, \
-    HomeFavSerializer, HomeCreateSerializer, \
+     HomeCreateSerializer, \
     WebAmenitiesSerializer, NewHomeCreateSerializer, WebPriceSerializer, NewWebHomeCreateSerializer, \
     NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
     GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer, ProductLinkSerializer
@@ -248,12 +248,6 @@ def add_to_wishlist(request, pk):
 
     data['wishlist_len'] = get_wishlist_data(wishlist)
     return JsonResponse(data)
-
-
-class HouseFavListAPIView(generics.ListAPIView):
-    ''' Fav (Houses)'''
-    queryset = HouseModel.objects.order_by('pk')
-    serializer_class = HomeFavSerializer
 
 
 class HouseDetailAPIView(APIView):

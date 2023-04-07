@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 class CategoryModel(models.Model):
     title = models.CharField(max_length=500, verbose_name=_('title'))
     subtitle = models.TextField(verbose_name=_('subtitle'), null=True)
-    image = models.FileField(upload_to='category_image')
-    created_at = models.DateTimeField(auto_now_add=True)
+    image = models.FileField(upload_to='category_image', verbose_name=_('image'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))
 
     def __str__(self):
         return self.title
@@ -19,7 +19,7 @@ class CategoryModel(models.Model):
 
 class AmenitiesModel(models.Model):
     title = models.CharField(max_length=300, verbose_name=_('title'))
-    image = models.FileField(upload_to='amenities_images')
+    image = models.FileField(upload_to='amenities_images', verbose_name=_('image'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))
 
     def __str__(self):
@@ -28,20 +28,6 @@ class AmenitiesModel(models.Model):
     class Meta:
         verbose_name = _('Все удобства')
         verbose_name_plural = _('Все удобства')
-
-
-class MapModel(models.Model):
-    addressName = models.CharField(max_length=200, verbose_name=_('address'))
-    latitude = models.FloatField(verbose_name=_('latitude'))
-    longtitude = models.FloatField(verbose_name=_('longtitude'))
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.addressName
-
-    class Meta:
-        verbose_name = _('Карта')
-        verbose_name_plural = _('Карты')
 
 
 class ImagesModel(models.Model):
@@ -77,12 +63,12 @@ class HowSaleModel(models.Model):
 
 class HouseModel(models.Model):
     creator = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='houses', null=True,
-                                blank=True)
+                                blank=True, verbose_name=_('creator'))
     title = models.CharField(max_length=600, verbose_name=_('title'))
     category = models.ForeignKey(CategoryModel, on_delete=models.CASCADE, verbose_name=_('category'),
                                  related_name=_('category'), null=True, blank=True
                                  )
-    view_count = models.PositiveIntegerField(default=0, null=True)
+    view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view count'),)
     descriptions = models.TextField(verbose_name=_('descriptions'))
     price = models.CharField(max_length=100, verbose_name=_('price'))
     # app_currency = models.CharField(max_length=10, verbose_name=_('app_currency'), null=True)
@@ -90,10 +76,10 @@ class HouseModel(models.Model):
     # typeOfRent = models.CharField(max_length=90, verbose_name=_('typeOfRent'), null=True)
     # typeOfHouse = models.CharField(max_length=90, verbose_name=_('typeOfHouse'), null=True)
     # typeOfObject = models.CharField(max_length=90, null=True)
-    app_ipoteka = models.BooleanField(default=False, null=True)
-    app_mebel = models.BooleanField(default=False, null=True)
-    app_new_building = models.BooleanField(default=False, null=True)
-    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types', null=True)
+    app_ipoteka = models.BooleanField(default=False, null=True, verbose_name=_('app_ipoteka'))
+    app_mebel = models.BooleanField(default=False, null=True, verbose_name=_('app_mebel'))
+    app_new_building = models.BooleanField(default=False, null=True, verbose_name=_('app_new_building'))
+    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types', null=True, verbose_name=_('price_type'))
     ADD_TYPE = (
         ('купить', 'Купить'),
         ('продать', 'Продать'),
@@ -105,17 +91,19 @@ class HouseModel(models.Model):
         default=ADD_TYPE[1],
         null=True,
         blank=True,
+        verbose_name=_('type')
     )
-    youtube_link = models.CharField(max_length=500, null=True, blank=True)
+    youtube_link = models.CharField(max_length=500, null=True, blank=True, verbose_name=_('youtube_link'))
     web_address_title = models.CharField(max_length=400, verbose_name=_('web_address_title'), null=True)
     web_address_latitude = models.FloatField(verbose_name=_('web_address_latitude'), null=True)
     web_address_longtitude = models.FloatField(verbose_name=_('web_address_longtitude'), null=True)
-    how_sale = models.ForeignKey(HowSaleModel, on_delete=models.CASCADE, null=True, blank=True)
+    how_sale = models.ForeignKey(HowSaleModel, on_delete=models.CASCADE, null=True, blank=True,
+                                 verbose_name=_('how_sale'))
     pm_general = models.CharField(max_length=400, verbose_name=_('pm_general'), null=True)
     # web_type = models.CharField(max_length=400, verbose_name=_('web_type'), null=True)
     # web_rental_type = models.CharField(max_length=400, verbose_name=_('web_rental_type'), null=True)
-    pm_residential = models.CharField(max_length=500, verbose_name=_('pm_kitchen'), null=True)
-    pm_kitchen = models.CharField(max_length=300, verbose_name=_('pm_kitchen2'), null=True)
+    pm_residential = models.CharField(max_length=500, verbose_name=_('pm_residential'), null=True)
+    pm_kitchen = models.CharField(max_length=300, verbose_name=_('pm_kitchens'), null=True)
     # web_building_type = models.CharField(max_length=600, verbose_name=_('web_building_type'), null=True)
     RENTAL_TYPE = (
         ('длительно', 'Длительно'),
@@ -128,6 +116,7 @@ class HouseModel(models.Model):
         default=RENTAL_TYPE[1],
         null=True,
         blank=True,
+        verbose_name=_("rental_type")
     )
     PROPERTY_TYPE = (
         ('жилая', 'жилая'),
@@ -148,13 +137,15 @@ class HouseModel(models.Model):
         default=None,
         null=True,
         blank=True,
+        verbose_name=_('Object')
     )
     # address = models.ForeignKey(MapModel, on_delete=models.CASCADE, verbose_name=_('address'), null=True)
     property_type = models.CharField(
         max_length=100,
         choices=PROPERTY_TYPE,
         default=PROPERTY_TYPE[1],
-        null=True
+        null=True,
+        verbose_name=_('property_type')
     )
     # images = models.ManyToManyField(ImagesModel, null=True, blank=True)
     # image = models.ImageField(upload_to='Product/APi', null=True)
@@ -183,7 +174,7 @@ class HouseModel(models.Model):
                                        blank=True)
     isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))
-    draft = models.BooleanField(default=False, null=True)
+    draft = models.BooleanField(default=False, null=True, verbose_name=_('draft'))
     PRODUCT_STATUS = [
         (0, 'InProgress'),
         (1, 'PUBLISH'),
@@ -194,7 +185,8 @@ class HouseModel(models.Model):
     product_status = models.IntegerField(
         choices=PRODUCT_STATUS,
         default=0,
-        null=True
+        null=True,
+        verbose_name=_('product status'),
     )
 
     def __str__(self):
@@ -219,8 +211,8 @@ class HouseModel(models.Model):
 
 
 class NewHouseImages(models.Model):
-    product = models.ForeignKey(HouseModel, on_delete=models.CASCADE, related_name='images')
-    images = models.ImageField(upload_to='API/images', max_length=100, null=True)
+    product = models.ForeignKey(HouseModel, on_delete=models.CASCADE, related_name='images', verbose_name=_('product'))
+    images = models.ImageField(upload_to='API/images', max_length=100, null=True, verbose_name=_('images'))
 
 
 class HouseImageModel(models.Model):

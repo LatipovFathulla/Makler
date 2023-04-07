@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from products.models import CategoryModel, HouseModel, AmenitiesModel, MapModel, \
-    HouseImageModel, PriceListModel, HowSaleModel, UserWishlistModel, NewHouseImages
+from products.models import CategoryModel, HouseModel, AmenitiesModel, \
+    HouseImageModel, PriceListModel, HowSaleModel, NewHouseImages
 
 
 @admin.register(CategoryModel)
@@ -33,12 +33,6 @@ class PriceListModelAdmin(admin.ModelAdmin):
     save_as = True
 
 
-@admin.register(MapModel)
-class MapModelAdmin(admin.ModelAdmin):
-    list_display = ['addressName', 'latitude', 'longtitude', 'created_at']
-    search_fields = ['addressName']
-    list_filter = ['created_at']
-
 
 # @admin.register(HouseImageModel)
 # class HouseImageModelAdmin(admin.ModelAdmin):
@@ -63,8 +57,3 @@ class HouseModelAdmin(admin.ModelAdmin):
     inlines = [NewHouseImagesInline]
     save_as = True
     save_on_top = True
-
-
-@admin.register(UserWishlistModel)
-class UserWishlistModelAdmin(admin.ModelAdmin):
-    list_display = ['pk']

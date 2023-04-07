@@ -19,6 +19,11 @@ class HowServiceModelAdmin(admin.ModelAdmin):
     save_as = True
 
 
+class MasterImagesModelAdmin(admin.TabularInline):
+    model = MasterImagesModel
+    extra = 1
+
+
 #         for i in validated_data['profession']:
 #             profession = MasterProfessionModel.objects.get(id=i)
 #             mastermodel.profession.add(profession)
@@ -28,12 +33,6 @@ class MasterModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'email', 'phone']
     search_fields = ['name', 'email', 'phone']
     list_filter = ['name', 'email', 'phone']
-    save_on_top = True
-    save_as = True
-
-
-@admin.register(MasterImagesModel)
-class MasterImagesModel(admin.ModelAdmin):
-    list_display = ['pk', 'images']
+    inlines = [MasterImagesModelAdmin]
     save_on_top = True
     save_as = True

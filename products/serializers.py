@@ -2,7 +2,7 @@ from rest_framework import serializers
 import os
 
 from makler import settings
-from products.models import CategoryModel, HouseModel, AmenitiesModel, MapModel, HouseImageModel, ImagesModel, \
+from products.models import CategoryModel, HouseModel, AmenitiesModel, HouseImageModel, ImagesModel, \
     NewHouseImages, PriceListModel, HowSaleModel, UserWishlistModel
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -28,12 +28,6 @@ class WebPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriceListModel
         fields = ['id', 'price_t']
-
-
-class AddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MapModel
-        exclude = ['created_at']
 
 
 class HomeImageSerializer(serializers.ModelSerializer):
@@ -452,13 +446,6 @@ class NewWebHomeCreateSerializer(serializers.ModelSerializer):
         return urls
 
 
-class HomeFavSerializer(serializers.ModelSerializer):
-    address = AddressSerializer()
-
-    class Meta:
-        model = HouseModel
-        fields = ['id', 'title', 'price', 'address', 'isBookmarked', 'created_at']
-
 
 class HomeCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -468,7 +455,6 @@ class HomeCategorySerializer(serializers.ModelSerializer):
 
 class HomeDetailSerializer(serializers.ModelSerializer):
     category = HomeCategorySerializer()
-    address = AddressSerializer()
     # image = HomeImageSerializer(many=True)
     amenities = AmenitiesSerializer(many=True)
 

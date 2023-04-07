@@ -28,7 +28,8 @@ class HowServiceModel(models.Model):
 
 
 class MasterModel(models.Model):
-    owner = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='maklers', null=True)
+    owner = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='maklers',
+                              null=True, verbose_name=_('owner'))
     name = models.CharField(max_length=100, verbose_name=_('name'))
     email = models.EmailField(verbose_name=_('email'))
     phone = models.CharField(max_length=30, verbose_name=_('phone'), default=0)
@@ -47,8 +48,8 @@ class MasterModel(models.Model):
     experience = models.IntegerField(verbose_name=_('experience'), null=True)
     isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))
-    draft = models.BooleanField(default=False)
-    view_count = models.PositiveIntegerField(default=0, null=True)
+    draft = models.BooleanField(default=False, verbose_name=_('draft'))
+    view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view_count'))
     PRODUCT_STATUS = [
         (0, 'InProgress'),
         (1, 'PUBLISH'),
@@ -59,7 +60,8 @@ class MasterModel(models.Model):
     product_status = models.IntegerField(
         choices=PRODUCT_STATUS,
         default=0,
-        null=True
+        null=True,
+        help_text='Не трогать'
     )
 
     def __str__(self):
@@ -77,8 +79,8 @@ class MasterModel(models.Model):
 
 
 class MasterImagesModel(models.Model):
-    master = models.ForeignKey(MasterModel, on_delete=models.CASCADE, related_name='images')
-    images = models.FileField(upload_to='master_images', max_length=100, null=True)
+    master = models.ForeignKey(MasterModel, on_delete=models.CASCADE, related_name='images', verbose_name='мастер')
+    images = models.FileField(upload_to='master_images', max_length=100, null=True, verbose_name='изображение')
 
     class Meta:
         verbose_name = _('Изображения для мастера')

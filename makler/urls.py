@@ -20,7 +20,7 @@ from carousel.views import CarouselModelAPIView
 from .yasg import urlpatterns as doc_urls
 from rest_framework.routers import DefaultRouter
 
-from products.views import CategoryListAPIView, AmenitiesListAPIView, HouseFavListAPIView, WebAmenitiesListAPIView, \
+from products.views import CategoryListAPIView, AmenitiesListAPIView, WebAmenitiesListAPIView, \
     WebPriceListAPIView, snippet_list
 
 from django.conf.urls.static import static
@@ -43,20 +43,12 @@ urlpatterns = [
     path('api/v1/carousels/', CarouselModelAPIView.as_view()),
     path('web/api/v1/web-amenities/', WebAmenitiesListAPIView.as_view()),
     path('web/api/v1/web-prices/', WebPriceListAPIView.as_view()),
-    path('api/v1/fav/', HouseFavListAPIView.as_view()),
-
-    # path('posts/', PostList.as_view()),
-    # path('posts/<int:pk>/', PostDetail.as_view()),
-    # path('web/api/v1/web-houses/', WebHomeCreateView.as_view()),
-    # path('api/v1/houses/create/', HouseAddCreateAPIView.as_view()),
-    # path('api/v1/houses/archived/', HouseArchiveListAPIView.as_view()),
-    # path('api/v1/login', LoginView.as_view()),
-    # path('api/v1/auth/', include('djoser.urls.authtoken')),
-    # path('api/v1/store/create/', StoreAddCreateAPIView.as_view()),
-    # path('web/api/v1/web-houses', WebHomeCreateView),
-    # path('user/', include()),
-    # path('web2/', snippet_list),
 ]
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('rosetta/', include('rosetta.urls'))
+    ]
 
 urlpatterns += doc_urls
 urlpatterns += router.urls

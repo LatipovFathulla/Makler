@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-19 00:41+0500\n"
+"POT-Creation-Date: 2023-04-07 15:07+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,62 +19,364 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
-#: products/models.py:7 products/models.py:20
-msgid "title"
-msgstr ""
 
-#: products/models.py:15 products/models.py:21
-msgid "category"
-msgstr ""
-
-#: products/models.py:16
-msgid "categories"
-msgstr ""
-
-#: products/models.py:22
-msgid "descriptions"
-msgstr ""
-
-#: products/models.py:61
-msgid "map"
-msgstr ""
-
-#: products/models.py:62
+#: carousel/models.py:6 products/models.py:9 products/models.py:22
+#: products/models.py:221 store/models.py:62
 msgid "image"
 msgstr ""
 
-#: products/models.py:63
-msgid "general"
-msgstr ""
-
-#: products/models.py:64
-msgid "residential"
-msgstr ""
-
-#: products/models.py:65
-msgid "number_of_rooms"
-msgstr ""
-
-#: products/models.py:66
-msgid "floor"
-msgstr ""
-
-#: products/models.py:67
-msgid "floor_from"
-msgstr ""
-
-#: products/models.py:78
-msgid "building_type"
-msgstr ""
-
-#: products/models.py:80
+#: carousel/models.py:7 masters/models.py:8 masters/models.py:20
+#: masters/models.py:50 masters/models.py:93 mebel/models.py:9
+#: mebel/models.py:50 products/models.py:10 products/models.py:23
+#: products/models.py:42 products/models.py:54 products/models.py:176
+#: products/models.py:222 products/models.py:232 store/models.py:11
+#: store/models.py:23 store/models.py:35 store/models.py:47 store/models.py:75
 msgid "created_at"
 msgstr ""
 
-#: products/models.py:86
-msgid "House"
+#: carousel/models.py:10
+msgid "Карусель"
 msgstr ""
 
-#: products/models.py:87
-msgid "Houses"
+#: carousel/models.py:11
+msgid "Карусели"
+msgstr ""
+
+#: masters/models.py:7 mebel/models.py:8 mebel/models.py:22
+#: products/models.py:7 products/models.py:21 products/models.py:67
+#: store/models.py:10 store/models.py:22
+msgid "title"
+msgstr ""
+
+#: masters/models.py:14
+msgid "Профессия"
+msgstr ""
+
+#: masters/models.py:15
+msgid "Профессии"
+msgstr ""
+
+#: masters/models.py:19 store/models.py:34
+msgid "Какая услуга"
+msgstr ""
+
+#: masters/models.py:26 masters/models.py:27 products/models.py:53
+#: products/models.py:60 products/models.py:61 store/models.py:41
+#: store/models.py:42
+msgid "Как продавать"
+msgstr ""
+
+#: masters/models.py:32
+msgid "owner"
+msgstr ""
+
+#: masters/models.py:33 store/models.py:60
+msgid "name"
+msgstr ""
+
+#: masters/models.py:34 store/models.py:73
+msgid "email"
+msgstr ""
+
+#: masters/models.py:35
+msgid "phone"
+msgstr ""
+
+#: masters/models.py:36
+msgid "password"
+msgstr ""
+
+#: masters/models.py:39
+msgid "address_title"
+msgstr ""
+
+#: masters/models.py:40
+msgid "address_latitude"
+msgstr ""
+
+#: masters/models.py:41
+msgid "address_longitude"
+msgstr ""
+
+#: masters/models.py:42
+msgid "avatar"
+msgstr ""
+
+#: masters/models.py:43
+msgid "profession"
+msgstr ""
+
+#: masters/models.py:47 mebel/models.py:33 products/models.py:72
+msgid "descriptions"
+msgstr ""
+
+#: masters/models.py:48
+msgid "experience"
+msgstr ""
+
+#: masters/models.py:49 mebel/models.py:49 products/models.py:175
+#: store/models.py:74
+msgid "isBookmarked"
+msgstr ""
+
+#: masters/models.py:51 mebel/models.py:34 products/models.py:177
+#: store/models.py:76
+msgid "draft"
+msgstr ""
+
+#: masters/models.py:52 mebel/models.py:35 store/models.py:77
+msgid "view_count"
+msgstr ""
+
+#: masters/models.py:76
+msgid "Мастер"
+msgstr ""
+
+#: masters/models.py:77
+msgid "Мастеры"
+msgstr ""
+
+#: masters/models.py:86
+msgid "Изображения для мастера"
+msgstr ""
+
+#: masters/models.py:87
+msgid "Изображения для мастеров"
+msgstr ""
+
+#: masters/models.py:99 masters/models.py:100
+msgid "Wishlist"
+msgstr ""
+
+#: mebel/models.py:15
+msgid "Mebel_Category"
+msgstr ""
+
+#: mebel/models.py:16
+msgid "Mebel_Categories"
+msgstr ""
+
+#: mebel/models.py:21 products/models.py:66 store/models.py:59
+msgid "creator"
+msgstr ""
+
+#: mebel/models.py:24 products/models.py:68 products/models.py:69
+msgid "category"
+msgstr ""
+
+#: mebel/models.py:25 products/models.py:41 products/models.py:73
+#: store/models.py:67
+msgid "price"
+msgstr ""
+
+#: mebel/models.py:26 products/models.py:172
+msgid "phone_number"
+msgstr ""
+
+#: mebel/models.py:27 products/models.py:97
+msgid "web_address_title"
+msgstr ""
+
+#: mebel/models.py:28 products/models.py:98
+msgid "web_address_latitude"
+msgstr ""
+
+#: mebel/models.py:29 products/models.py:99
+msgid "web_address_longtitude"
+msgstr ""
+
+#: mebel/models.py:31 products/models.py:82 store/models.py:69
+msgid "price_type"
+msgstr ""
+
+#: mebel/models.py:32
+msgid "short_descriptions"
+msgstr ""
+
+#: mebel/models.py:47 products/models.py:189 store/models.py:89
+msgid "product status"
+msgstr ""
+
+#: mebel/models.py:56
+msgid "Mebel"
+msgstr ""
+
+#: mebel/models.py:57
+msgid "Mebels"
+msgstr ""
+
+#: products/models.py:8
+msgid "subtitle"
+msgstr ""
+
+#: products/models.py:16
+msgid "Категория"
+msgstr ""
+
+#: products/models.py:17
+msgid "Категории"
+msgstr ""
+
+#: products/models.py:29 products/models.py:30
+msgid "Все удобства"
+msgstr ""
+
+#: products/models.py:48
+msgid "Цена"
+msgstr ""
+
+#: products/models.py:49
+msgid "Цены"
+msgstr ""
+
+#: products/models.py:71
+msgid "view count"
+msgstr ""
+
+#: products/models.py:79
+msgid "app_ipoteka"
+msgstr ""
+
+#: products/models.py:80
+msgid "app_mebel"
+msgstr ""
+
+#: products/models.py:81
+msgid "app_new_building"
+msgstr ""
+
+#: products/models.py:94
+msgid "type"
+msgstr ""
+
+#: products/models.py:96
+msgid "youtube_link"
+msgstr ""
+
+#: products/models.py:101
+msgid "how_sale"
+msgstr ""
+
+#: products/models.py:102
+msgid "pm_general"
+msgstr ""
+
+#: products/models.py:105
+msgid "pm_residential"
+msgstr ""
+
+#: products/models.py:106
+msgid "pm_kitchens"
+msgstr ""
+
+#: products/models.py:119
+msgid "rental_type"
+msgstr ""
+
+#: products/models.py:140
+msgid "Object"
+msgstr ""
+
+#: products/models.py:148
+msgid "property_type"
+msgstr ""
+
+#: products/models.py:154
+msgid "number_of_rooms"
+msgstr ""
+
+#: products/models.py:155
+msgid "floor"
+msgstr ""
+
+#: products/models.py:156
+msgid "floor_from"
+msgstr ""
+
+#: products/models.py:167
+msgid "building_type"
+msgstr ""
+
+#: products/models.py:173
+msgid "amenities"
+msgstr ""
+
+#: products/models.py:173
+msgid "pr_amenities"
+msgstr ""
+
+#: products/models.py:208 products/models.py:209
+msgid "Маклер, (квартиры и т.д)"
+msgstr ""
+
+#: products/models.py:214
+msgid "product"
+msgstr ""
+
+#: products/models.py:215
+msgid "images"
+msgstr ""
+
+#: products/models.py:225 products/models.py:226
+msgid "Изображения маклер (квартиры и т.д)"
+msgstr ""
+
+#: products/models.py:235
+msgid "Избранное"
+msgstr ""
+
+#: products/models.py:236
+msgid "Избранные"
+msgstr ""
+
+#: store/models.py:17 store/models.py:18
+msgid "Store_amenities"
+msgstr ""
+
+#: store/models.py:29 store/models.py:30
+msgid "Для"
+msgstr ""
+
+#: store/models.py:46 store/models.py:53
+msgid "Бренд"
+msgstr ""
+
+#: store/models.py:54
+msgid "Бренды"
+msgstr ""
+
+#: store/models.py:61
+msgid "description"
+msgstr ""
+
+#: store/models.py:63
+msgid "brand_image"
+msgstr ""
+
+#: store/models.py:64
+msgid "brand"
+msgstr ""
+
+#: store/models.py:66
+msgid "how_store"
+msgstr ""
+
+#: store/models.py:70
+msgid "use_for"
+msgstr ""
+
+#: store/models.py:71
+msgid "phoneNumber"
+msgstr ""
+
+#: store/models.py:72
+msgid "address"
+msgstr ""
+
+#: store/models.py:91
+msgid "store_amenities"
+msgstr ""
+
+#: store/models.py:103 store/models.py:104
+msgid "Обустройствo дома"
 msgstr ""

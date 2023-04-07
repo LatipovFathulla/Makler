@@ -56,23 +56,25 @@ class StoreBrandModel(models.Model):
 
 class StoreModel(models.Model):
     creator = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='stores', null=True,
-                                blank=True)
+                                blank=True, verbose_name=_('creator'))
     name = models.CharField(max_length=200, verbose_name=_('name'))
-    description = models.TextField()
+    description = models.TextField(verbose_name=_('description'))
     image = models.ImageField(upload_to='store_images', max_length=100, verbose_name=_('image'), null=True)
     brand_image = models.ImageField(upload_to='avatar_image', verbose_name=_('brand_image'), null=True)
-    brand_title = models.ForeignKey(StoreBrandModel, on_delete=models.CASCADE, null=True)
-    how_store_service = models.ForeignKey(HowStoreServiceModel, on_delete=models.CASCADE, null=True)
+    brand_title = models.ForeignKey(StoreBrandModel, on_delete=models.CASCADE, null=True, verbose_name=_('brand'))
+    how_store_service = models.ForeignKey(HowStoreServiceModel, on_delete=models.CASCADE, null=True,
+                                          verbose_name=_('how_store'))
     price = models.PositiveIntegerField(verbose_name=_('price'), null=True)
-    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='store_price_type', null=True)
-    use_for = models.ForeignKey(UseForModel, on_delete=models.CASCADE, null=True)
+    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='store_price_type',
+                                   verbose_name=_('price_type'), null=True)
+    use_for = models.ForeignKey(UseForModel, on_delete=models.CASCADE, verbose_name=_('use_for'), null=True)
     phoneNumber = models.CharField(verbose_name=_('phoneNumber'), max_length=25)
     address = models.CharField(max_length=400, verbose_name=_('address'), null=True)
     email = models.EmailField(verbose_name=_('email'))
     isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))
-    draft = models.BooleanField(default=False)
-    view_count = models.PositiveIntegerField(default=0, null=True)
+    draft = models.BooleanField(default=False, verbose_name=_('draft'))
+    view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view_count'))
     PRODUCT_STATUS = [
         (0, 'InProgress'),
         (1, 'PUBLISH'),
@@ -83,9 +85,11 @@ class StoreModel(models.Model):
     product_status = models.IntegerField(
         choices=PRODUCT_STATUS,
         default=0,
-        null=True
+        null=True,
+        verbose_name=_('product status'),
     )
-    store_amenitites = models.ManyToManyField(StoreAmenities, verbose_name=_('store_amenities'), related_name='store_amenitites')
+    store_amenitites = models.ManyToManyField(StoreAmenities, verbose_name=_('store_amenities'),
+                                              related_name='store_amenitites')
 
     def __str__(self):
         return self.name

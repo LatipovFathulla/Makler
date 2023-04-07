@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
     'celery',
     'django_celery_beat',
+    'rosetta',
 
     # django apps
     'products',

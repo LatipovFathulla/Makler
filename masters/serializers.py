@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
-from products.models import MapModel
+
 from user.models import CustomUser
 from .models import MasterModel, MasterProfessionModel, MasterImagesModel, MasterUserWishlistModel, HowServiceModel
 
@@ -10,13 +9,6 @@ class MasterProfessionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = MasterProfessionModel
         fields = ['title']
-
-
-# master address
-class AddressModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MapModel
-        exclude = ['id', 'created_at']
 
 
 # master images

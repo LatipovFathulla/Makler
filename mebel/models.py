@@ -17,19 +17,22 @@ class MebelCategoryModel(models.Model):
 
 
 class MebelModel(models.Model):
-    creator = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='mebels', null=True)
+    creator = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='mebels',
+                                verbose_name=_('creator'), null=True)
     title = models.CharField(max_length=400, verbose_name=_('title'))
-    category = models.ForeignKey(MebelCategoryModel, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(MebelCategoryModel, on_delete=models.CASCADE,
+                                 verbose_name=_('category'), null=True)
     price = models.IntegerField(verbose_name=_('price'), null=True)
     phone_number = models.CharField(max_length=30, verbose_name=_('phone_number'), null=True)
     web_address_title = models.CharField(max_length=400, verbose_name=_('web_address_title'), null=True)
     web_address_latitude = models.FloatField(verbose_name=_('web_address_latitude'), null=True)
     web_address_longtitude = models.FloatField(verbose_name=_('web_address_longtitude'), null=True)
-    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types_mebel', null=True)
+    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types_mebel',
+                                   verbose_name=_('price_type'), null=True)
     short_descriptions = models.TextField(verbose_name=_('short_descriptions'), null=True)
     long_descriptions = models.TextField(verbose_name=_('descriptions'), null=True)
-    draft = models.BooleanField(default=False, null=True)
-    view_count = models.PositiveIntegerField(default=0, null=True)
+    draft = models.BooleanField(default=False, null=True, verbose_name=_('draft'))
+    view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view_count'))
     PRODUCT_STATUS = [
         (0, 'InProgress'),
         (1, 'PUBLISH'),
@@ -40,10 +43,11 @@ class MebelModel(models.Model):
     product_status = models.IntegerField(
         choices=PRODUCT_STATUS,
         default=0,
-        null=True
+        null=True,
+        verbose_name=_('product status')
     )
     isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name=_('created_at'))
 
     def __str__(self):
         return self.title

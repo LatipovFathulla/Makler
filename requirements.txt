@@ -22,6 +22,7 @@ django-filter==21.1
 django-jazzmin==2.6.0
 django-modeltranslation==0.18.4
 django-multiselectfield==0.1.12
+django-rosetta==0.9.8
 django-templated-mail==1.1.1
 django-timezone-field==5.0
 djangorestframework==3.14.0
@@ -37,6 +38,7 @@ MarkupSafe==2.1.2
 oauthlib==3.2.2
 packaging==23.0
 Pillow==9.4.0
+polib==1.2.0
 prompt-toolkit==3.0.38
 pycparser==2.21
 PyJWT==2.6.0
