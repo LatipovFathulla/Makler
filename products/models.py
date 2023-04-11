@@ -66,9 +66,9 @@ class HouseModel(models.Model):
                                 blank=True, verbose_name=_('creator'))
     title = models.CharField(max_length=600, verbose_name=_('title'))
     category = models.ForeignKey(CategoryModel, on_delete=models.CASCADE, verbose_name=_('category'),
-                                 related_name=_('category'), null=True, blank=True
+                                 related_name='category', null=True, blank=True
                                  )
-    view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view count'),)
+    view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view count'), )
     descriptions = models.TextField(verbose_name=_('descriptions'))
     price = models.CharField(max_length=100, verbose_name=_('price'))
     # app_currency = models.CharField(max_length=10, verbose_name=_('app_currency'), null=True)
@@ -79,7 +79,8 @@ class HouseModel(models.Model):
     app_ipoteka = models.BooleanField(default=False, null=True, verbose_name=_('app_ipoteka'))
     app_mebel = models.BooleanField(default=False, null=True, verbose_name=_('app_mebel'))
     app_new_building = models.BooleanField(default=False, null=True, verbose_name=_('app_new_building'))
-    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types', null=True, verbose_name=_('price_type'))
+    price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types', null=True,
+                                   verbose_name=_('price_type'))
     ADD_TYPE = (
         ('купить', 'Купить'),
         ('продать', 'Продать'),
@@ -93,7 +94,7 @@ class HouseModel(models.Model):
         blank=True,
         verbose_name=_('type')
     )
-    youtube_link = models.CharField(max_length=500, null=True, blank=True, verbose_name=_('youtube_link'))
+    youtube_link = models.FileField(upload_to='Videos', verbose_name=_('youtube_link'), null=True, blank=True)
     web_address_title = models.CharField(max_length=400, verbose_name=_('web_address_title'), null=True)
     web_address_latitude = models.FloatField(verbose_name=_('web_address_latitude'), null=True)
     web_address_longtitude = models.FloatField(verbose_name=_('web_address_longtitude'), null=True)
@@ -169,7 +170,7 @@ class HouseModel(models.Model):
     )
 
     phone_number = models.CharField(max_length=19, verbose_name=_('phone_number'), null=True)
-    amenities = models.ManyToManyField(AmenitiesModel, verbose_name=_('amenities'), related_name=_('pr_amenities'),
+    amenities = models.ManyToManyField(AmenitiesModel, verbose_name=_('amenities'), related_name='pr_amenities',
                                        blank=True)
     isBookmarked = models.BooleanField(default=False, verbose_name=_('isBookmarked'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))

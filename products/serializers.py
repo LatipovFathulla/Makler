@@ -285,7 +285,7 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HouseModel
-        fields = ['id', 'creator', 'title', 'descriptions', 'price', 'price_type',
+        fields = ['id', 'creator', 'title', 'title_uz', 'title_ru', 'descriptions', 'price', 'price_type',
                   'type', 'rental_type', 'property_type', 'object',
                   'web_address_title', 'web_address_latitude', 'web_address_longtitude',
                   'pm_general', 'pm_residential', 'images', 'uploaded_images',

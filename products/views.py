@@ -1,4 +1,5 @@
 from django.http import JsonResponse, HttpResponse
+from django.utils import translation
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, mixins, status
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -9,6 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from django.utils.translation import activate
+
+from makler import settings
 from masters.models import MasterModel
 from masters.serializers import MasterSerializer
 from mebel.models import MebelModel
@@ -107,11 +110,17 @@ class WebHomeListAPIView(ListAPIView):
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
 
-    def dispatch(self, request, *args, **kwargs):
-        # Определяем язык перед вызовом view
-        language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем язык из заголовка Accept-Language
-        activate(language)
-        return super().dispatch(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        language = settings.LANGUAGE_CODE[:2]
+        if 'HTTP_ACCEPT_LANGUAGE' in request.META:
+            language_header = request.META['HTTP_ACCEPT_LANGUAGE']
+            language = language_header.split(',')[0][:2]
+            if language not in dict(settings.LANGUAGES):
+                language = settings.LANGUAGE_CODE[:2]
+        translation.activate(language)
+        response = super().get(request, *args, **kwargs)
+        setattr(response, 'LANGUAGE_CODE', 'ru')
+        return response
     # def get_queryset(self):
     #     queryset = self.queryset
     #     change_model_field.delay()

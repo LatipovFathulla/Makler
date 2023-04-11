@@ -1,8 +1,11 @@
 from pathlib import Path
 
 from datetime import timedelta
+
+from botocore.config import Config
 from decouple import config
 import os
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +50,7 @@ INSTALLED_APPS = [
     'celery',
     'django_celery_beat',
     'rosetta',
+    'storages',
 
     # django apps
     'products',
@@ -68,7 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'products.middleware.LanguageMiddleware',
+    'products.middleware.LanguageMiddleware'
 ]
 
 ROOT_URLCONF = 'makler.urls'
@@ -116,20 +120,14 @@ WSGI_APPLICATION = 'makler.wsgi.application'
 
 # Database
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DB_PASS'),
-#         'HOST': config('DB_HOST'),
-#         'PORT': config('DB_PORT'),
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASS'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 # Password validation
@@ -153,10 +151,12 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru'
 
 LANGUAGES = (
-    ('ru', 'Russian'),
-    ('uz', 'Uzbek'),
+    ('ru', _('Russian')),
+    ('uz', _('Uzbek')),
 )
 
+
+MODELTRANSLATION_LANGUAGES = ('ru', 'uz')
 
 TIME_ZONE = 'Asia/Tashkent'
 
@@ -186,6 +186,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
@@ -271,7 +275,17 @@ CORS_ORIGIN_WHITELIST = (
 
 SITE_ID = 1
 
+#AWS SETTINGS
 
+
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_FILE_OVERWRITE = config('AWS_S3_FILE_OVERWRITE')
+AWS_DEFAULT_ACL = config('AWS_DEFAULT_ACL')
+DEFAULT_FILE_STORAGE = config('DEFAULT_FILE_STORAGE')
+AWS_S3_SIGNATURE_VERSION = config('AWS_S3_SIGNATURE_VERSION')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 SET_PASSWORD_RETYPE = True
@@ -280,6 +294,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 try:
-    from .settings_local import *
+    from settings_local import *
 except ImportError:
     pass

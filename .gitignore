@@ -140,3 +140,4 @@ cython_debug/
 static
 .idea
 media
+settings_local.py
