@@ -110,17 +110,6 @@ class WebHomeListAPIView(ListAPIView):
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
 
-    def get(self, request, *args, **kwargs):
-        language = settings.LANGUAGE_CODE[:2]
-        if 'HTTP_ACCEPT_LANGUAGE' in request.META:
-            language_header = request.META['HTTP_ACCEPT_LANGUAGE']
-            language = language_header.split(',')[0][:2]
-            if language not in dict(settings.LANGUAGES):
-                language = settings.LANGUAGE_CODE[:2]
-        translation.activate(language)
-        response = super().get(request, *args, **kwargs)
-        setattr(response, 'LANGUAGE_CODE', 'ru')
-        return response
     # def get_queryset(self):
     #     queryset = self.queryset
     #     change_model_field.delay()

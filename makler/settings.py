@@ -72,7 +72,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'products.middleware.LanguageMiddleware'
 ]
 
 ROOT_URLCONF = 'makler.urls'
@@ -93,29 +92,6 @@ TEMPLATES = [
     },
 ]
 
-JAZZMIN_SETTINGS = {
-    "site_title": "Makleruz.uz", "site_header": "Makleruz.uz", "site_brand": "Makleruz.uz",
-    "login_logo": None, "login_logo_dark": None,
-    "site_icon": None, "welcome_sign": "Makleruz.uz", "copyright": "Makleruz.uz", "user_avatar": None,
-    "show_ui_builder": True, "topmenu_links": [
-
-        # Url that gets reversed (Permissions can be added)
-        {"name": "Главаня", "url": "admin:index", "permissions": ["auth.view_user"]},
-
-        # external url that opens in a new window (Permissions can be added)
-        {"name": "Маклер", "url": "/admin/products/housemodel/"},
-        {"name": "Мастер", "url": "/admin/masters/mastermodel/"},
-        {"name": "Обустройства", "url": "/admin/store/storemodel/"},
-
-    ], "usermenu_links": [
-        {"model": "auth.user"}
-    ], "show_sidebar": True, "navigation_expanded": True, "hide_apps": [], "hide_models": [],
-    "order_with_respect_to": ["masters", "products", "store", "blog", "works"],
-    "related_modal_active": False, "custom_css": None, "custom_js": None,
-    "changeform_format": "horizontal_tabs",
-    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"}
-}
-
 WSGI_APPLICATION = 'makler.wsgi.application'
 
 # Database
@@ -130,6 +106,13 @@ DATABASES = {
         'PORT': config('DB_PORT'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -256,10 +239,11 @@ INTERNAL_IPS = [
 CELERY_BEAT_SCHEDULE = {
     'update_product_status': {
         'task': 'products.tasks.update_product_status',
-        'schedule': timedelta(minutes=30),
+        'schedule': timedelta(days=30),
     },
 }
 # celery -A makler worker -B
+# celery -A makler worker -l info
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
@@ -292,6 +276,30 @@ SET_PASSWORD_RETYPE = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Makleruz.uz", "site_header": "Makleruz.uz", "site_brand": "Makleruz.uz",
+    "login_logo": None, "login_logo_dark": None,
+    "site_icon": None, "welcome_sign": "Makleruz.uz", "copyright": "Makleruz.uz", "user_avatar": None,
+    "show_ui_builder": True, "topmenu_links": [
+
+        # Url that gets reversed (Permissions can be added)
+        {"name": "Главаня", "url": "admin:index", "permissions": ["auth.view_user"]},
+
+        # external url that opens in a new window (Permissions can be added)
+        {"name": "Маклер", "url": "/admin/products/housemodel/"},
+        {"name": "Мастер", "url": "/admin/masters/mastermodel/"},
+        {"name": "Обустройства", "url": "/admin/store/storemodel/"},
+
+    ], "usermenu_links": [
+        {"model": "auth.user"}
+    ], "show_sidebar": True, "navigation_expanded": True, "hide_apps": [], "hide_models": [],
+    "order_with_respect_to": ["masters", "products", "store", "blog", "works"],
+    "related_modal_active": False, "custom_css": None, "custom_js": None,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+    "language_chooser": True,
+}
 
 try:
     from settings_local import *

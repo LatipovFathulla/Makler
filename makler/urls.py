@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.i18n import i18n_patterns
 
 from carousel.views import CarouselModelAPIView
 from .yasg import urlpatterns as doc_urls
@@ -34,7 +35,6 @@ urlpatterns = [
     path('master/', include('masters.urls'), name='masters'),
     path('store2/', include('store.urls'), name='store'),
     path('users/', include('user.urls')),
-    path('admin/', admin.site.urls),
     path('products/', include('products.urls'), name='products'),
     path('mebel/', include('mebel.urls'), name='mebel'),
     path('authorization/', include('authorization.urls')),
@@ -43,7 +43,12 @@ urlpatterns = [
     path('api/v1/carousels/', CarouselModelAPIView.as_view()),
     path('web/api/v1/web-amenities/', WebAmenitiesListAPIView.as_view()),
     path('web/api/v1/web-prices/', WebPriceListAPIView.as_view()),
+    path('i18n/', include("django.conf.urls.i18n")),
 ]
+
+urlpatterns += i18n_patterns(
+    path('admin/', admin.site.urls),
+)
 
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += [
