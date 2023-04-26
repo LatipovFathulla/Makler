@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-07 16:04+0500\n"
+"POT-Creation-Date: 2023-04-26 17:57+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,15 +21,15 @@ msgstr ""
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: carousel/models.py:6 products/models.py:9 products/models.py:22
-#: products/models.py:220 store/models.py:62
+#: products/models.py:221 store/models.py:62
 msgid "image"
 msgstr ""
 
 #: carousel/models.py:7 masters/models.py:8 masters/models.py:20
 #: masters/models.py:48 masters/models.py:91 mebel/models.py:9
 #: mebel/models.py:50 products/models.py:10 products/models.py:23
-#: products/models.py:42 products/models.py:54 products/models.py:175
-#: products/models.py:221 products/models.py:231 store/models.py:11
+#: products/models.py:42 products/models.py:54 products/models.py:176
+#: products/models.py:222 products/models.py:232 store/models.py:11
 #: store/models.py:23 store/models.py:35 store/models.py:47 store/models.py:75
 msgid "created_at"
 msgstr ""
@@ -40,6 +40,14 @@ msgstr ""
 
 #: carousel/models.py:11
 msgid "Карусели"
+msgstr ""
+
+#: makler/settings.py:138
+msgid "Russian"
+msgstr ""
+
+#: makler/settings.py:139
+msgid "Uzbek"
 msgstr ""
 
 #: masters/models.py:7 mebel/models.py:8 mebel/models.py:22
@@ -114,12 +122,12 @@ msgstr ""
 msgid "experience"
 msgstr ""
 
-#: masters/models.py:47 mebel/models.py:49 products/models.py:174
+#: masters/models.py:47 mebel/models.py:49 products/models.py:175
 #: store/models.py:74
 msgid "isBookmarked"
 msgstr ""
 
-#: masters/models.py:49 mebel/models.py:34 products/models.py:176
+#: masters/models.py:49 mebel/models.py:34 products/models.py:177
 #: store/models.py:76
 msgid "draft"
 msgstr ""
@@ -160,7 +168,7 @@ msgstr ""
 msgid "creator"
 msgstr ""
 
-#: mebel/models.py:24 products/models.py:68 products/models.py:69
+#: mebel/models.py:24 products/models.py:68
 msgid "category"
 msgstr ""
 
@@ -169,23 +177,23 @@ msgstr ""
 msgid "price"
 msgstr ""
 
-#: mebel/models.py:26 products/models.py:171
+#: mebel/models.py:26 products/models.py:172
 msgid "phone_number"
 msgstr ""
 
-#: mebel/models.py:27 products/models.py:97
+#: mebel/models.py:27 products/models.py:98
 msgid "web_address_title"
 msgstr ""
 
-#: mebel/models.py:28 products/models.py:98
+#: mebel/models.py:28 products/models.py:99
 msgid "web_address_latitude"
 msgstr ""
 
-#: mebel/models.py:29 products/models.py:99
+#: mebel/models.py:29 products/models.py:100
 msgid "web_address_longtitude"
 msgstr ""
 
-#: mebel/models.py:31 products/models.py:82 store/models.py:69
+#: mebel/models.py:31 products/models.py:83 store/models.py:69
 msgid "price_type"
 msgstr ""
 
@@ -193,7 +201,7 @@ msgstr ""
 msgid "short_descriptions"
 msgstr ""
 
-#: mebel/models.py:47 products/models.py:188 store/models.py:89
+#: mebel/models.py:47 products/models.py:189 store/models.py:89
 msgid "product status"
 msgstr ""
 
@@ -245,87 +253,83 @@ msgstr ""
 msgid "app_new_building"
 msgstr ""
 
-#: products/models.py:94
+#: products/models.py:95
 msgid "type"
 msgstr ""
 
-#: products/models.py:96
+#: products/models.py:97
 msgid "youtube_link"
 msgstr ""
 
-#: products/models.py:101
+#: products/models.py:102
 msgid "how_sale"
 msgstr ""
 
-#: products/models.py:102
+#: products/models.py:103
 msgid "pm_general"
 msgstr ""
 
-#: products/models.py:105
+#: products/models.py:106
 msgid "pm_residential"
 msgstr ""
 
-#: products/models.py:106
+#: products/models.py:107
 msgid "pm_kitchens"
 msgstr ""
 
-#: products/models.py:119
+#: products/models.py:120
 msgid "rental_type"
 msgstr ""
 
-#: products/models.py:140
+#: products/models.py:141
 msgid "Object"
 msgstr ""
 
-#: products/models.py:147
+#: products/models.py:148
 msgid "property_type"
 msgstr ""
 
-#: products/models.py:153
+#: products/models.py:154
 msgid "number_of_rooms"
 msgstr ""
 
-#: products/models.py:154
+#: products/models.py:155
 msgid "floor"
 msgstr ""
 
-#: products/models.py:155
+#: products/models.py:156
 msgid "floor_from"
 msgstr ""
 
-#: products/models.py:166
+#: products/models.py:167
 msgid "building_type"
 msgstr ""
 
-#: products/models.py:172
+#: products/models.py:173
 msgid "amenities"
 msgstr ""
 
-#: products/models.py:172
-msgid "pr_amenities"
-msgstr ""
-
-#: products/models.py:207 products/models.py:208
+#: products/models.py:208 products/models.py:209
 msgid "Маклер, (квартиры и т.д)"
 msgstr ""
 
-#: products/models.py:213
+#: products/models.py:214
 msgid "product"
 msgstr ""
 
-#: products/models.py:214
+#: products/models.py:215
 msgid "images"
 msgstr ""
 
-#: products/models.py:224 products/models.py:225
+#: products/models.py:225 products/models.py:226
 msgid "Изображения маклер (квартиры и т.д)"
 msgstr ""
 
-#: products/models.py:234
+#: products/models.py:235
 msgid "Избранное"
 msgstr ""
 
-#: products/models.py:235
+#: products/models.py:236
 msgid "Избранные"
 msgstr ""
 

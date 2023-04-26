@@ -96,23 +96,24 @@ WSGI_APPLICATION = 'makler.wsgi.application'
 
 # Database
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': config('DB_NAME'),
+#         'USER': config('DB_USER'),
+#         'PASSWORD': config('DB_PASS'),
+#         'HOST': config('DB_HOST'),
+#         'PORT': config('DB_PORT'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASS'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -138,8 +139,9 @@ LANGUAGES = (
     ('uz', _('Uzbek')),
 )
 
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 
-MODELTRANSLATION_LANGUAGES = ('ru', 'uz')
+LOCALE_PATHS = BASE_DIR / 'locale',
 
 TIME_ZONE = 'Asia/Tashkent'
 
@@ -154,8 +156,6 @@ STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_DIRS = BASE_DIR / 'assets',
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-LOCALE_PATHS = BASE_DIR / 'locale',
 
 AUTH_USER_MODEL = 'user.CustomUser'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None

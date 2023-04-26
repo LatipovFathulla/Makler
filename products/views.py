@@ -37,6 +37,13 @@ class CategoryListAPIView(generics.ListAPIView):
     queryset = CategoryModel.objects.order_by('pk')
     serializer_class = CategorySerializer
 
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
+
 
 class AmenitiesListAPIView(generics.ListAPIView):
     ''' Удобства (Amenities in product)'''
@@ -109,6 +116,13 @@ class WebHomeListAPIView(ListAPIView):
 
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
+
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
 
     # def get_queryset(self):
     #     queryset = self.queryset

@@ -1,11 +1,22 @@
 from rest_framework import serializers
+from modeltranslation.utils import get_language
 import os
 
 from makler import settings
 from products.models import CategoryModel, HouseModel, AmenitiesModel, HouseImageModel, ImagesModel, \
     NewHouseImages, PriceListModel, HowSaleModel, UserWishlistModel
 
+
 class CategorySerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    subtitle = serializers.SerializerMethodField()
+
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
+
+    def get_subtitle(self, obj):
+        return obj.subtitle if get_language() == 'ru' else getattr(obj, f'subtitle_{get_language()}')
+
     class Meta:
         model = CategoryModel
         fields = ['id', 'title', 'subtitle', 'image', 'created_at']
@@ -278,10 +289,18 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
     how_sale = NewWebHowSaleSerializer()
     type = HouseTypeSerializer
     link = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    descriptions = serializers.SerializerMethodField()
 
     # rental_type = HouseRentalTypeSerializer
 
     # address = AddressSerializer()
+
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
+
+    def get_descriptions(self, obj):
+        return obj.descriptions if get_language() == 'ru' else getattr(obj, f'descriptions_{get_language()}')
 
     class Meta:
         model = HouseModel
@@ -444,7 +463,6 @@ class NewWebHomeCreateSerializer(serializers.ModelSerializer):
             myurl = self.context['request'].build_absolute_uri(i.image.url)
             urls.append(myurl)
         return urls
-
 
 
 class HomeCategorySerializer(serializers.ModelSerializer):
