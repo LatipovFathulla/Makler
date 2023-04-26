@@ -20,8 +20,8 @@ class MyTranslationAdmin(TranslationAdmin):
 
 @admin.register(CategoryModel)
 class CategoryModelAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
-    search_fields = ['title', 'created_at']
+    list_display = ['id', 'title', 'created_at']
+    search_fields = ['id', 'title', 'created_at']
     list_filter = ['created_at']
     save_as = True
 
