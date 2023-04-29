@@ -44,6 +44,7 @@ class HowStoreServiceModel(models.Model):
 
 class StoreBrandModel(models.Model):
     title = models.CharField(max_length=300, verbose_name=_('Бренд'))
+    image = models.FileField(upload_to='store-brand-image', null=True, blank=True, verbose_name=_('image'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created_at'))
 
     def __str__(self):

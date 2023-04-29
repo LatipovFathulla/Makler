@@ -507,3 +507,9 @@ class ProductLinkSerializer(serializers.ModelSerializer):
     def get_link(self, obj):
         request = self.context.get('request')
         return request.build_absolute_uri(obj.get_absolute_url())
+
+
+class HomeFilterNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseModel
+        fields = ['number_of_rooms']

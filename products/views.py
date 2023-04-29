@@ -25,10 +25,11 @@ from rest_framework.decorators import api_view
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel
 from products.serializers import CategorySerializer, HomeSerializer, AmenitiesSerializer, \
-     HomeCreateSerializer, \
+    HomeCreateSerializer, \
     WebAmenitiesSerializer, NewHomeCreateSerializer, WebPriceSerializer, NewWebHomeCreateSerializer, \
     NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
-    GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer, ProductLinkSerializer
+    GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer, ProductLinkSerializer, \
+    HomeFilterNumberSerializer
 from products.utils import get_wishlist_data
 
 
@@ -442,3 +443,8 @@ class HouseImageDestroyView(DestroyAPIView):
         image.delete()
 
         return Response({'detail': 'Image deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class HomeFilterNumberView(ListAPIView):
+    queryset = HouseModel.objects.all()
+    serializer_class = HomeFilterNumberSerializer

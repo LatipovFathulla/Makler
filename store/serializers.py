@@ -44,7 +44,7 @@ class PatchStoreUpdateModelSerializer(serializers.ModelSerializer):
 class StoreBrandModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoreBrandModel
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'image']
 
 
 class ALLStoreModelSerializer(serializers.ModelSerializer):
