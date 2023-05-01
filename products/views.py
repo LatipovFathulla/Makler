@@ -29,7 +29,7 @@ from products.serializers import CategorySerializer, HomeSerializer, AmenitiesSe
     WebAmenitiesSerializer, NewHomeCreateSerializer, WebPriceSerializer, NewWebHomeCreateSerializer, \
     NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
     GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer, ProductLinkSerializer, \
-    HomeFilterNumberSerializer
+    HomeFilterNumberSerializer, HomeFilterObjectSerializer
 from products.utils import get_wishlist_data
 
 
@@ -166,6 +166,8 @@ class ArchiveProductListView(APIView):
         }
 
         return Response(response_data)
+
+
 # class ArchiveProductListView(generics.ListAPIView):
 #     serializer_class = NewAllWebHomeCreateSerializer
 #     permission_classes = [IsAuthenticated, ]
@@ -173,22 +175,22 @@ class ArchiveProductListView(APIView):
 #     def get_queryset(self):
 #         user = self.request.user
 #         return HouseModel.objects.filter(product_status=3, creator=user)
-    # def get(self, request, *args, **kwargs):
-    #     houses = HouseModel.objects.filter(product_status=3)
-    #     maklers = MasterModel.objects.filter(product_status=3)
-    #     stores = StoreModel.objects.filter(product_status=3)
-    #     mebels = MebelModel.objects.filter(product_status=3)
-    #
-    #     serialized_data = UserProductsSerializer({
-    #         'houses': houses,
-    #         'maklers': maklers,
-    #         'stores': stores,
-    #         'mebels': mebels,
-    #     }, context={'request': request})
-    #
-    #     return Response(serialized_data.data)
-    # def get_queryset(self):
-    #     return HouseModel.objects.filter(product_status=3)
+# def get(self, request, *args, **kwargs):
+#     houses = HouseModel.objects.filter(product_status=3)
+#     maklers = MasterModel.objects.filter(product_status=3)
+#     stores = StoreModel.objects.filter(product_status=3)
+#     mebels = MebelModel.objects.filter(product_status=3)
+#
+#     serialized_data = UserProductsSerializer({
+#         'houses': houses,
+#         'maklers': maklers,
+#         'stores': stores,
+#         'mebels': mebels,
+#     }, context={'request': request})
+#
+#     return Response(serialized_data.data)
+# def get_queryset(self):
+#     return HouseModel.objects.filter(product_status=3)
 
 
 class SearchWebHomeListAPIView(ListAPIView):
@@ -448,3 +450,9 @@ class HouseImageDestroyView(DestroyAPIView):
 class HomeFilterNumberView(ListAPIView):
     queryset = HouseModel.objects.all()
     serializer_class = HomeFilterNumberSerializer
+
+
+# HomeFilterObjectSerializer
+class HomeFilterObjectView(ListAPIView):
+    queryset = HouseModel.objects.all()
+    serializer_class = HomeFilterObjectSerializer

@@ -513,3 +513,9 @@ class HomeFilterNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseModel
         fields = ['number_of_rooms']
+
+
+class HomeFilterObjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseModel
+        fields = ['object']
