@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fnruiiu589495649656jnsfisnfisf'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -254,10 +254,11 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:4200',
     'http://127.0.0.1',
     'https://makler1.herokuapp.com',
-    'http://193.162.143.210'
+    'https://84.252.75.67',
+    'https://api.makleruz.uz',
 )
 
-SITE_ID = 1
+SITE_ID = 2
 
 #AWS SETTINGS
 
