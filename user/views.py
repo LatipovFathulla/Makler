@@ -1,3 +1,6 @@
+import random
+from django.core.cache import cache
+
 from django.contrib.auth import logout
 from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
@@ -25,25 +28,72 @@ from .models import CustomUser
 from products.serializers import HomeSerializer
 from masters.serializers import MasterSerializer
 from store.serializers import StoreModelSerializer
+from .playmobile import SUCCESS, SendSmsWithPlayMobile
 
 from .serializers import RegistrationSerializer, UserSerializer, LoginSerializer, UserALLSerializer, \
     UpdateUserSerializer, UserProductsSerializer
 
 
-class UserViewSet(GenericViewSet):
+
+class UserViewSet(viewsets.GenericViewSet):
     ''' Регистрация юзера '''
     queryset = CustomUser.objects.all()
     serializer_class = RegistrationSerializer
 
-    # @action(['POST'], detail=False, permission_classes=[permissions.AllowAny])
-    def create(self, request: Request):
-        self.serializer_class = RegistrationSerializer
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone_number = serializer.validated_data['phone_number']
         token, created = CustomUser.objects.get_or_create(phone_number=phone_number)
-        return Response({'token': token.tokens()})
 
+        # Отправка SMS-кода подтверждения
+        confirmation_code = generate_confirmation_code()
+        sms_message = f"Ваш код подтверждения: {confirmation_code}"
+        playmobile_api = SendSmsWithPlayMobile(message=sms_message, phone=phone_number)
+        sms_response = playmobile_api.send()
+
+        if sms_response['status'] == SUCCESS:
+            # Сохранение кода подтверждения
+            save_confirmation_code(confirmation_code, phone_number)
+
+            return Response({'token': token.tokens(), 'confirmation_code': confirmation_code})
+        else:
+            return Response({'error': 'Ошибка при отправке SMS-сообщения'})
+
+
+class ConfirmationView(APIView):
+    def post(self, request):
+        confirmation_code = request.data.get('confirmation_code')
+        phone_number = request.data.get('phone_number')
+
+        # Проверка кода подтверждения
+        if is_valid_confirmation_code(confirmation_code, phone_number):
+            # Авторизация пользователя или другие действия
+            return Response({'message': 'Код подтверждения верный. Пользователь авторизован.'})
+        else:
+            return Response({'error': 'Код подтверждения неверный.'})
+
+
+def generate_confirmation_code():
+    # Генерация случайного кода подтверждения
+    confirmation_code = generate_random_code()  # Реализуйте генерацию случайного кода подтверждения
+    return confirmation_code
+
+
+def save_confirmation_code(code, phone_number):
+    # Сохранение кода подтверждения в кэше
+    cache.set(f"confirmation_code_{phone_number}", code)
+
+
+def is_valid_confirmation_code(code, phone_number):
+    # Проверка кода подтверждения
+    saved_code = cache.get(f"confirmation_code_{phone_number}")
+    return code == saved_code
+
+
+def generate_random_code():
+    psr = random.randint(1000, 9999)
+    return psr
     #
     # @action(['DELETE'], detail=False, permission_classes=[IsAuthenticated])
     # def logout(self, request: Request):
