@@ -244,7 +244,7 @@ class SendSmsWithPlayMobile:
             return {'status': FAILED, 'result': "Sms xizmatida tomonidan xatolik yuz berdi!"}
 
     def clean_message(self, message):
-        print(f"Old message: {message}")
+        # print(f"Old message: {message}")
         message = message.replace('ц', 'ts').replace('ч', 'ch').replace('ю',
                                                                         'yu').replace(
             'а', 'a').replace('б', 'b').replace('қ', "q").replace('ў', "o'").replace('ғ', "g'").replace('ҳ',
@@ -275,7 +275,7 @@ class SendSmsWithPlayMobile:
             'С', 'S').replace('Т', 'T').replace('У', 'U').replace('Ш', 'Sh').replace('Щ', 'Sh').replace('Ф',
                                                                                                         'F').replace(
             'Э', 'E').replace('Я', 'Ya')
-        print(f"Cleaned message: {message}")
+        # print(f"Cleaned message: {message}")
         return message
 
     def calculation_send_sms(self, message):
