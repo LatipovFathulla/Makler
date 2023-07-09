@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.renderers import JSONRenderer
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -36,7 +37,6 @@ from .serializers import RegistrationSerializer, UserSerializer, LoginSerializer
 
 
 class UserViewSet(viewsets.GenericViewSet):
-    ''' Регистрация юзера '''
     queryset = CustomUser.objects.all()
     serializer_class = RegistrationSerializer
 
@@ -68,15 +68,20 @@ class ConfirmationView(APIView):
 
         # Проверка кода подтверждения
         if is_valid_confirmation_code(confirmation_code, phone_number):
-            # Авторизация пользователя или другие действия
-            return Response({'message': 'Код подтверждения верный. Пользователь авторизован.'})
+            # Авторизация пользователя
+            user = CustomUser.objects.get(phone_number=phone_number)
+            refresh = RefreshToken.for_user(user)
+            return Response({'message': 'Код подтверждения верный. Пользователь авторизован.',
+                             'refresh': str(refresh),
+                             'access': str(refresh.access_token),
+                             'id': str(user.id)})
         else:
             return Response({'error': 'Код подтверждения неверный.'})
 
 
 def generate_confirmation_code():
     # Генерация случайного кода подтверждения
-    confirmation_code = generate_random_code()  # Реализуйте генерацию случайного кода подтверждения
+    confirmation_code = generate_random_code()
     return confirmation_code
 
 
@@ -92,8 +97,7 @@ def is_valid_confirmation_code(code, phone_number):
 
 
 def generate_random_code():
-    psr = random.randint(1000, 9999)
-    return psr
+    return str(random.randint(1000, 9999))
     #
     # @action(['DELETE'], detail=False, permission_classes=[IsAuthenticated])
     # def logout(self, request: Request):
@@ -236,3 +240,20 @@ class UpdateProfileView(generics.RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = UpdateUserSerializer
+
+
+class UserDeleteAPIView(generics.DestroyAPIView):
+    queryset = CustomUser.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        # Отозвать (инвалидировать) все активные токены пользователя
+        tokens = Token.objects.filter(user=instance)
+        for token in tokens:
+            token.delete()
+
+        # Удалить пользователя
+        instance.delete()
+
+        return Response({'message': 'Пользователь успешно удален'}, status=status.HTTP_204_NO_CONTENT)
