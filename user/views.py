@@ -84,6 +84,7 @@ def generate_confirmation_code():
 
 def save_confirmation_code(code, phone_number, password):
     # Сохранение кода подтверждения в кэше с указанием версии
+    cache.delete(f"confirmation_code_{phone_number}")
     cache.set(f"confirmation_code_{phone_number}", code, version=str(code))
     print(f"Saved confirmation code: {code}")
 
