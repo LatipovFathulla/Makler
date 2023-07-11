@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 
-from carousel.views import CarouselModelAPIView
+from carousel.views import CarouselModelAPIView, BannerADSModelAPIView
 from .yasg import urlpatterns as doc_urls
 from rest_framework.routers import DefaultRouter
 
@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/v1/categories/', CategoryListAPIView.as_view()),
     path('api/v1/amenities/', AmenitiesListAPIView.as_view()),
     path('api/v1/carousels/', CarouselModelAPIView.as_view()),
+    path('api/v1/banner-ads/', BannerADSModelAPIView.as_view()),
     path('web/api/v1/web-amenities/', WebAmenitiesListAPIView.as_view()),
     path('web/api/v1/web-prices/', WebPriceListAPIView.as_view()),
     path('i18n/', include("django.conf.urls.i18n")),
