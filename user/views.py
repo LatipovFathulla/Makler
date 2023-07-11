@@ -60,7 +60,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
 class ConfirmationView(APIView):
     def post(self, request):
-        confirmation_code = int(request.data.get('confirmation_code'))
+        confirmation_code = request.data.get('confirmation_code')
         phone_number = request.data.get('phone_number')
 
         # Проверка кода подтверждения
@@ -90,9 +90,8 @@ def save_confirmation_code(code, phone_number, password):
 
 def is_valid_confirmation_code(code, phone_number):
     # Проверка кода подтверждения
-    saved_code = cache.get(f"confirmation_code_{phone_number}", version=str(code))
-    print(f"Saved code: {saved_code}")
-    return str(code) == saved_code
+    saved_code = cache.get(f"confirmation_code_{phone_number}", version=code)
+    return code == saved_code
 
 
 # def is_valid_confirmation_code(code, phone_number):
