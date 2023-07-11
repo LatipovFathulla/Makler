@@ -27,7 +27,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['phone_number']
+        fields = ['phone_number', 'password',]
         # extra_kwargs = dict(
         #     password=dict(required=True)
         # )

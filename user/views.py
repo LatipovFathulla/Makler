@@ -1,21 +1,17 @@
 import random
 from django.core.cache import cache
 
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate
 from django.http import HttpResponse
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets, generics, permissions, status
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.request import Request
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.renderers import JSONRenderer
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -35,7 +31,6 @@ from .serializers import RegistrationSerializer, UserSerializer, LoginSerializer
     UpdateUserSerializer, UserProductsSerializer
 
 
-
 class UserViewSet(viewsets.GenericViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = RegistrationSerializer
@@ -44,7 +39,9 @@ class UserViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone_number = serializer.validated_data['phone_number']
-        token, created = CustomUser.objects.get_or_create(phone_number=phone_number)
+        password = serializer.validated_data['password']
+        hashed_password = make_password(password)  # Хеширование пароля
+        token, created = CustomUser.objects.get_or_create(phone_number=phone_number, password=hashed_password)
 
         # Отправка SMS-кода подтверждения
         confirmation_code = generate_confirmation_code()
@@ -54,16 +51,16 @@ class UserViewSet(viewsets.GenericViewSet):
 
         if sms_response['status'] == SUCCESS:
             # Сохранение кода подтверждения
-            save_confirmation_code(confirmation_code, phone_number)
+            save_confirmation_code(confirmation_code, phone_number, password=hashed_password)
 
-            return Response({'token': token.tokens(), 'confirmation_code': confirmation_code})
+            return Response({'token': token.tokens()})
         else:
             return Response({'error': 'Ошибка при отправке SMS-сообщения'})
 
 
 class ConfirmationView(APIView):
     def post(self, request):
-        confirmation_code = request.data.get('confirmation_code')
+        confirmation_code = int(request.data.get('confirmation_code'))
         phone_number = request.data.get('phone_number')
 
         # Проверка кода подтверждения
@@ -85,24 +82,61 @@ def generate_confirmation_code():
     return confirmation_code
 
 
-def save_confirmation_code(code, phone_number):
-    # Сохранение кода подтверждения в кэше
-    cache.set(f"confirmation_code_{phone_number}", code)
+def save_confirmation_code(code, phone_number, password):
+    # Сохранение кода подтверждения в кэше с указанием версии
+    cache.set(f"confirmation_code_{phone_number}", code, timeout=None, version=str(code))
+    print(f"Saved confirmation code: {code}")
 
 
 def is_valid_confirmation_code(code, phone_number):
     # Проверка кода подтверждения
-    saved_code = cache.get(f"confirmation_code_{phone_number}")
-    return code == saved_code
+    saved_code = cache.get(f"confirmation_code_{phone_number}", version=str(code))
+    print(f"Saved code: {saved_code}")
+    return str(code) == saved_code
+
+
+# def is_valid_confirmation_code(code, phone_number):
+#     # Проверка кода подтверждения
+#     saved_code = cache.get(f"confirmation_code_{phone_number}", version=code)
+#     print(f"Saved code: {saved_code}")
+#     return code == saved_code
 
 
 def generate_random_code():
     return str(random.randint(1000, 9999))
-    #
-    # @action(['DELETE'], detail=False, permission_classes=[IsAuthenticated])
-    # def logout(self, request: Request):
-    #     Token.objects.get(user=request.user).delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class LoginView(APIView):
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'phone_number': openapi.Schema(type=openapi.TYPE_STRING),
+            'password': openapi.Schema(type=openapi.TYPE_STRING)
+        }
+    ))
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        password = request.data.get('password')
+
+        # Аутентификация пользователя
+        user = authenticate(request, phone_number=phone_number, password=password)
+
+        if user is not None:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'id': str(user.id)
+            })
+        else:
+            return Response({'error': 'Неверные учетные данные.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+#
+# @action(['DELETE'], detail=False, permission_classes=[IsAuthenticated])
+# def logout(self, request: Request):
+#     Token.objects.get(user=request.user).delete()
+#     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # class LoginView(TokenObtainPairView):
@@ -119,34 +153,34 @@ def generate_random_code():
 #         if not user:
 #             login(request, user)
 
-
-class LoginView(GenericViewSet):
-    serializer_class = LoginSerializer
-    queryset = CustomUser.objects.all()
-
-    @action(['POST'], detail=False, permission_classes=[permissions.AllowAny])
-    def login(self, request: Request):
-        self.serializer_class = LoginSerializer
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        phone_number = serializer.validated_data['phone_number']
-        code = serializer.validated_data['code']
-        if int(code) == int(CustomUser.objects.get(phone_number=phone_number).mycode):
-
-            token, created = CustomUser.objects.get_or_create(phone_number=phone_number)
-            return Response({'token': token.tokens()})
-        else:
-            return Response(
-                {'error': f"Code is not valid! {code}=!{CustomUser.objects.get(phone_number=phone_number).mycode}"})
-
-    @action(['POST'], detail=False, permission_classes=[permissions.IsAuthenticated])
-    def logout(self, request):
-        token = RefreshToken(request.data.get('refresh'))
-        token.blacklist()
-        if not token.blacklist():
-            return Response("Ошибка")
-        else:
-            return Response({"status": "Успешно"})
+#
+# class LoginView(GenericViewSet):
+#     serializer_class = LoginSerializer
+#     queryset = CustomUser.objects.all()
+#
+#     @action(['POST'], detail=False, permission_classes=[permissions.AllowAny])
+#     def login(self, request: Request):
+#         self.serializer_class = LoginSerializer
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         phone_number = serializer.validated_data['phone_number']
+#         code = serializer.validated_data['code']
+#         if int(code) == int(CustomUser.objects.get(phone_number=phone_number).mycode):
+#
+#             token, created = CustomUser.objects.get_or_create(phone_number=phone_number)
+#             return Response({'token': token.tokens()})
+#         else:
+#             return Response(
+#                 {'error': f"Code is not valid! {code}=!{CustomUser.objects.get(phone_number=phone_number).mycode}"})
+#
+#     @action(['POST'], detail=False, permission_classes=[permissions.IsAuthenticated])
+#     def logout(self, request):
+#         token = RefreshToken(request.data.get('refresh'))
+#         token.blacklist()
+#         if not token.blacklist():
+#             return Response("Ошибка")
+#         else:
+#             return Response({"status": "Успешно"})
 
 
 class UserProfile(APIView):

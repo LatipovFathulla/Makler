@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from user.views import UserViewSet, LoginView, ConfirmationView
 
 router = DefaultRouter()
-router.register('', LoginView, 'auth')
+# router.register('', LoginView, 'auth')
 router.register('signup', UserViewSet, 'register')
 
 urlpatterns = [
@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/v1/confirmation/', ConfirmationView.as_view(), name='confirmation'),
+    path('api/v1/login/', LoginView.as_view(), name='login'),
 
 ]
 
