@@ -70,11 +70,10 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.mycode:
             self.mycode = str(random.randint(100000, 999999))
-        super().save(*args, **kwargs)
         # Удаление mycode через 2 дня
         if self.created_at and (timezone.now().date() - self.created_at) >= timezone.timedelta(days=2):
             self.mycode = None
-            self.save(update_fields=['mycode'])
+        super().save(*args, **kwargs)
 
     def tokens(self):
         refresh = RefreshToken.for_user(self)
