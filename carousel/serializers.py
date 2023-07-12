@@ -13,3 +13,4 @@ class BannerADSModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = BannerADSModel
         fields = '__all__'
+ 

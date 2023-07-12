@@ -41,69 +41,65 @@ class UserViewSet(viewsets.GenericViewSet):
         phone_number = serializer.validated_data['phone_number']
         password = serializer.validated_data['password']
         hashed_password = make_password(password)  # Хеширование пароля
-        token, created = CustomUser.objects.get_or_create(phone_number=phone_number, password=hashed_password)
+        user, created = CustomUser.objects.get_or_create(phone_number=phone_number,
+                                                         defaults={'password': hashed_password})
+
+        if created or not user.mycode:  # Генерация нового кода подтверждения, если пользователь новый или код отсутствует
+            user.mycode = str(random.randint(1000, 9999))
+            user.save(update_fields=['mycode'])
 
         # Отправка SMS-кода подтверждения
-        confirmation_code = generate_confirmation_code()
-        sms_message = f"Ваш код подтверждения: {confirmation_code}"
+        sms_message = f"Ваш код подтверждения: {user.mycode}"
         playmobile_api = SendSmsWithPlayMobile(message=sms_message, phone=phone_number)
         sms_response = playmobile_api.send()
 
         if sms_response['status'] == SUCCESS:
-            # Сохранение кода подтверждения
-            save_confirmation_code(confirmation_code, phone_number, password=hashed_password)
-
-            return Response({'token': token.tokens()})
+            return Response({'token': user.tokens()})
         else:
             return Response({'error': 'Ошибка при отправке SMS-сообщения'})
 
 
 class ConfirmationView(APIView):
     def post(self, request):
-        confirmation_code = request.data.get('confirmation_code')
+        mycode = request.data.get('confirmation_code')
         phone_number = request.data.get('phone_number')
 
-        # Проверка кода подтверждения
-        if is_valid_confirmation_code(confirmation_code, phone_number):
-            # Авторизация пользователя
+        try:
             user = CustomUser.objects.get(phone_number=phone_number)
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Пользователь с указанным номером телефона не найден.'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        if user.is_valid_mycode(mycode):
             refresh = RefreshToken.for_user(user)
             return Response({'message': 'Код подтверждения верный. Пользователь авторизован.',
                              'refresh': str(refresh),
                              'access': str(refresh.access_token),
                              'id': str(user.id)})
         else:
-            return Response({'error': 'Код подтверждения неверный.'})
+            return Response({'error': 'Код подтверждения неверный.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def generate_confirmation_code():
-    # Генерация случайного кода подтверждения
-    confirmation_code = generate_random_code()
-    return confirmation_code
+def generate_mycode(self):
+    self.mycode = str(random.randint(1000, 9999))
+    self.save(update_fields=['mycode'])
+    return self.mycode
 
 
-def save_confirmation_code(code, phone_number, password):
-    # Сохранение кода подтверждения в кэше с указанием версии
-    cache.delete(f"confirmation_code_{phone_number}")
-    cache.set(f"confirmation_code_{phone_number}", code, version=str(code))
-    print(f"Saved confirmation code: {code}")
+def save_mycode_in_cache(self):
+    cache.delete(f"mycode_{self.phone_number}")
+    cache.set(f"mycode_{self.phone_number}", self.mycode, version=str(self.mycode))
 
 
-def is_valid_confirmation_code(code, phone_number):
-    # Проверка кода подтверждения
-    saved_code = cache.get(f"confirmation_code_{phone_number}", version=code)
-    return code == saved_code
+def is_valid_mycode(self, mycode):
+    saved_mycode = cache.get(f"mycode_{self.phone_number}", version=mycode)
+    return mycode == saved_mycode
 
 
-# def is_valid_confirmation_code(code, phone_number):
-#     # Проверка кода подтверждения
-#     saved_code = cache.get(f"confirmation_code_{phone_number}", version=code)
-#     print(f"Saved code: {saved_code}")
-#     return code == saved_code
-
-
-def generate_random_code():
-    return str(random.randint(1000, 9999))
+def clear_mycode(self):
+    self.mycode = None
+    self.save(update_fields=['mycode'])
+    cache.delete(f"mycode_{self.phone_number}")
 
 
 class LoginView(APIView):

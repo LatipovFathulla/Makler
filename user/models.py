@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
+import random
+from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.core.exceptions import ValidationError
@@ -36,7 +38,6 @@ class MyUserManager(BaseUserManager):
         return self.create_user(phone_number, password, **extra_fields)
 
 
-import random
 
 
 class CustomUser(AbstractUser):
@@ -54,13 +55,26 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.phone_number}"
 
-    @classmethod
-    def mycode2(self):
-        return random.randint(100000, 999999)
+    def generate_mycode(self):
+        self.mycode = str(random.randint(1000, 9999))
+        self.save(update_fields=['mycode'])
+        return self.mycode
+
+    def is_valid_mycode(self, mycode):
+        return str(mycode) == str(self.mycode)
+
+    def clear_mycode(self):
+        self.mycode = None
+        self.save(update_fields=['mycode'])
 
     def save(self, *args, **kwargs):
-        self.mycode = self.mycode2()
+        if not self.mycode:
+            self.mycode = str(random.randint(100000, 999999))
         super().save(*args, **kwargs)
+        # Удаление mycode через 2 дня
+        if self.created_at and (timezone.now().date() - self.created_at) >= timezone.timedelta(days=2):
+            self.mycode = None
+            self.save(update_fields=['mycode'])
 
     def tokens(self):
         refresh = RefreshToken.for_user(self)
