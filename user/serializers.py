@@ -132,9 +132,10 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'email', 'phone_number', 'password')
+        fields = ('first_name', 'avatar_image', 'email', 'phone_number', 'password')
         extra_kwargs = {
             'first_name': {'required': False},
+            'avatar_image': {},
             'email': {'required': False},
             'phone_number': {'required': False},
             'password': {'required': False},
