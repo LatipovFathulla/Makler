@@ -54,10 +54,19 @@ class UserViewSet(viewsets.GenericViewSet):
         sms_response = playmobile_api.send()
 
         if sms_response['status'] == SUCCESS:
-            return Response({'token': user.tokens()})
+            # Обновление баллов пользователя на основе количества приглашенных пользователей
+            invited_users_count = CustomUser.objects.filter(invited_by=user).count()
+            user.balances += invited_users_count
+            user.save()
+
+            return Response({'token': user.tokens(), 'unique_link': user.get_unique_link()})
         else:
             return Response({'error': 'Ошибка при отправке SMS-сообщения'})
 
+    def get_unique_link(self, request, pk=None):
+        user = self.get_object()
+        unique_link = user.get_unique_link()
+        return Response({'unique_link': unique_link})
 
 class ConfirmationView(APIView):
     def post(self, request):
@@ -233,11 +242,36 @@ class UserList(APIView):
 class NewUserList(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @swagger_auto_schema(
+        operation_summary="Получение данных пользователя (ЛК)",
+        operation_description="Метод получения данных пользователя. Помимо типа данных и токена авторизации, передается только ID пользователя.",
+        manual_parameters=[
+            openapi.Parameter(
+                name='unique_link',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description='Уникальная ссылка пользователя',
+                required=True
+            )
+        ]
+    )
     def get(self, request, pk):
-        users = CustomUser.objects.get(id=pk)
-        serializer = UserSerializer(users, context={'request': request})
+        user = CustomUser.objects.get(id=pk)
+        invited_users_count = CustomUser.objects.filter(invited_by=user).count()
+        user.balances += invited_users_count
+        user.save()
+
+        serializer = UserALLSerializer(user, context={'request': request})
         return Response(serializer.data)
 
+    def post(self, request, pk):
+        user = CustomUser.objects.get(id=pk)
+        user_id = request.data.get('user_id')
+
+        if user_id:
+            user.process_unique_link(user_id)
+
+        return Response({'status': 'success'})
 
 class UserProductsList(APIView):
     permission_classes = (IsAuthenticated,)

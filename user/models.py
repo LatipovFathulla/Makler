@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from django.db import models
 import random
 from django.utils import timezone
+from django.contrib.sites.models import Site
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.core.exceptions import ValidationError
@@ -48,6 +49,8 @@ class CustomUser(AbstractUser):
     created_at = models.DateField(auto_now_add=True, null=True)
     mycode = models.IntegerField(null=True)
     is_premium = models.BooleanField(default=False)
+    invited_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    balances = models.IntegerField(default=0)
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
     objects = MyUserManager()
@@ -59,6 +62,16 @@ class CustomUser(AbstractUser):
         self.mycode = str(random.randint(1000, 9999))
         self.save(update_fields=['mycode'])
         return self.mycode
+
+    def get_unique_link(self):
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        return f"https://{domain}/cabinet/{self.id}/"
+
+    def process_unique_link(self, user_id):
+        if str(self.id) == str(user_id):
+            self.balances += 1
+            self.save()
 
     def is_valid_mycode(self, mycode):
         return str(mycode) == str(self.mycode)

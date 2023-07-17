@@ -10,7 +10,7 @@ from user.views import UserProfile, UserList, UserDetailAPIView, UpdateProfileVi
 
 urlpatterns = [
         # path('api/v1/users/', include('user.urls')),
-        path('api/v1/profile/<int:pk>/', NewUserList.as_view()),
+        path('api/v1/profile/<int:pk>/', NewUserList.as_view(), name='user-profile'),
         path('api/v1/user-products/<int:pk>/', UserProductsList.as_view()),
         path('api/v1/get-user/<int:pk>/', UserDetailAPIView.as_view()),
         path('api/v1/update-user/<int:pk>/', UpdateProfileView.as_view()),
