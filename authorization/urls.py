@@ -14,7 +14,6 @@ urlpatterns = [
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/v1/confirmation/', ConfirmationView.as_view(), name='confirmation'),
     path('api/v1/login/', LoginView.as_view(), name='login'),
-    path('api/v1/scroereg/<int:pk>/', UserViewSet.as_view({'get': 'get_unique_link'}), name='scroereg'),
 
 
 ]

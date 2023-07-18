@@ -96,6 +96,15 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    referrer_link = serializers.SerializerMethodField()
+    balances = serializers.SerializerMethodField()
+
+    def get_referrer_link(self, obj):
+        return obj.referrer_link
+
+    def get_balances(self, obj):
+        return obj.get_balances()
+
     class Meta:
         model = CustomUser
         fields = '__all__'

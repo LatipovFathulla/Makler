@@ -16,7 +16,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-
+from django.contrib.sites.models import Site
 from masters.models import MasterModel
 from products.models import HouseModel
 from store.models import StoreModel
@@ -48,25 +48,32 @@ class UserViewSet(viewsets.GenericViewSet):
             user.mycode = str(random.randint(1000, 9999))
             user.save(update_fields=['mycode'])
 
+        # Генерация уникальной ссылки реферера
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        user.referrer_link = f"https://{domain}/{user.id}/"
+        user.save(update_fields=['referrer_link'])
+
+        # Проверка идентификатора реферера в запросе
+        referrer_id = request.data.get('referrer_id')
+        if referrer_id:
+            referrer_user = CustomUser.objects.filter(id=referrer_id).first()
+            if referrer_user:
+                user.invited_by = referrer_user
+                referrer_user.balances += 1
+                referrer_user.save()
+
         # Отправка SMS-кода подтверждения
         sms_message = f"Ваш код подтверждения: {user.mycode}"
         playmobile_api = SendSmsWithPlayMobile(message=sms_message, phone=phone_number)
         sms_response = playmobile_api.send()
 
         if sms_response['status'] == SUCCESS:
-            # Обновление баллов пользователя на основе количества приглашенных пользователей
-            invited_users_count = CustomUser.objects.filter(invited_by=user).count()
-            user.balances += invited_users_count
-            user.save()
-
-            return Response({'token': user.tokens(), 'unique_link': user.get_unique_link()})
+            return Response({'token': user.tokens(), 'referrer_link': user.referrer_link})
         else:
             return Response({'error': 'Ошибка при отправке SMS-сообщения'})
 
-    def get_unique_link(self, request, pk=None):
-        user = self.get_object()
-        unique_link = user.get_unique_link()
-        return Response({'unique_link': unique_link})
+
 
 class ConfirmationView(APIView):
     def post(self, request):
@@ -238,40 +245,23 @@ class UserList(APIView):
         else:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+from django.shortcuts import redirect
 
 class NewUserList(APIView):
     permission_classes = (IsAuthenticated,)
 
-    @swagger_auto_schema(
-        operation_summary="Получение данных пользователя (ЛК)",
-        operation_description="Метод получения данных пользователя. Помимо типа данных и токена авторизации, передается только ID пользователя.",
-        manual_parameters=[
-            openapi.Parameter(
-                name='unique_link',
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_STRING,
-                description='Уникальная ссылка пользователя',
-                required=True
-            )
-        ]
-    )
     def get(self, request, pk):
-        user = CustomUser.objects.get(id=pk)
-        invited_users_count = CustomUser.objects.filter(invited_by=user).count()
-        user.balances += invited_users_count
-        user.save()
+        # Проверяем, существует ли пользователь с указанным идентификатором
+        user = CustomUser.objects.filter(id=pk).first()
+        if user:
+            # Пользователь существует, выполняем регистрацию
+            user.balances += 1
+            user.save()
+            return redirect('https://makler-front.vercel.app')  # Перенаправляем на главную страницу
 
-        serializer = UserALLSerializer(user, context={'request': request})
-        return Response(serializer.data)
+        return Response({'error': 'Страница не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request, pk):
-        user = CustomUser.objects.get(id=pk)
-        user_id = request.data.get('user_id')
 
-        if user_id:
-            user.process_unique_link(user_id)
-
-        return Response({'status': 'success'})
 
 class UserProductsList(APIView):
     permission_classes = (IsAuthenticated,)
