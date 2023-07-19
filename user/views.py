@@ -48,31 +48,15 @@ class UserViewSet(viewsets.GenericViewSet):
             user.mycode = str(random.randint(1000, 9999))
             user.save(update_fields=['mycode'])
 
-        # Генерация уникальной ссылки реферера
-        current_site = Site.objects.get_current()
-        domain = current_site.domain
-        user.referrer_link = f"https://{domain}/{user.id}/"
-        user.save(update_fields=['referrer_link'])
-
-        # Проверка идентификатора реферера в запросе
-        referrer_id = request.data.get('referrer_id')
-        if referrer_id:
-            referrer_user = CustomUser.objects.filter(id=referrer_id).first()
-            if referrer_user:
-                user.invited_by = referrer_user
-                referrer_user.balances += 1
-                referrer_user.save()
-
         # Отправка SMS-кода подтверждения
         sms_message = f"Ваш код подтверждения: {user.mycode}"
         playmobile_api = SendSmsWithPlayMobile(message=sms_message, phone=phone_number)
         sms_response = playmobile_api.send()
 
         if sms_response['status'] == SUCCESS:
-            return Response({'token': user.tokens(), 'referrer_link': user.referrer_link})
+            return Response({'token': user.tokens()})
         else:
             return Response({'error': 'Ошибка при отправке SMS-сообщения'})
-
 
 
 class ConfirmationView(APIView):
@@ -245,22 +229,17 @@ class UserList(APIView):
         else:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+
 from django.shortcuts import redirect
+
 
 class NewUserList(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk):
-        # Проверяем, существует ли пользователь с указанным идентификатором
-        user = CustomUser.objects.filter(id=pk).first()
-        if user:
-            # Пользователь существует, выполняем регистрацию
-            user.balances += 1
-            user.save()
-            return redirect('https://makler-front.vercel.app')  # Перенаправляем на главную страницу
-
-        return Response({'error': 'Страница не найдена'}, status=status.HTTP_404_NOT_FOUND)
-
+        users = CustomUser.objects.get(id=pk)
+        serializer = UserSerializer(users, context={'request': request})
+        return Response(serializer.data)
 
 
 class UserProductsList(APIView):
