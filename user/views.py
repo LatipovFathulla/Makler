@@ -230,8 +230,6 @@ class UserList(APIView):
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
 
-from django.shortcuts import redirect
-
 
 class NewUserList(APIView):
     permission_classes = (IsAuthenticated,)
