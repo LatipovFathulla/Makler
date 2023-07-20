@@ -140,7 +140,7 @@ class LoginView(APIView):
 
 
 class UserReferralsList(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk):
         user = CustomUser.objects.get(id=pk)
