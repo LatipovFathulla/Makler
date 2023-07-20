@@ -315,10 +315,7 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
                   ]
 
     def get_link(self, obj):
-        request = self.context.get('request')
-        if request is not None:
-            return request.build_absolute_uri()
-        return ''
+        return "https://makler-front.vercel.app/"
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
