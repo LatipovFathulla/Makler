@@ -41,20 +41,31 @@ class UserViewSet(viewsets.GenericViewSet):
         phone_number = serializer.validated_data['phone_number']
         password = serializer.validated_data['password']
         hashed_password = make_password(password)  # Хеширование пароля
-        user, created = CustomUser.objects.get_or_create(phone_number=phone_number,
-                                                         defaults={'password': hashed_password})
 
-        if created or not user.mycode:  # Генерация нового кода подтверждения, если пользователь новый или код отсутствует
-            user.mycode = str(random.randint(1000, 9999))
-            user.save(update_fields=['mycode'])
+        # Получение данных о реферрере (если ссылка предоставлена)
+        referrer_id = request.query_params.get('referrer')
+        referrer = None
+        if referrer_id:
+            try:
+                referrer = CustomUser.objects.get(id=referrer_id)
+            except CustomUser.DoesNotExist:
+                return Response({'error': 'Invalid referrer ID'}, status=status.HTTP_400_BAD_REQUEST)
 
+        user, created = CustomUser.objects.get_or_create(phone_number=phone_number, defaults={'password': hashed_password})
+
+        if created or not user.mycode:
+            user.generate_mycode()
+
+        if referrer:
+            user.referrer = referrer
+            user.save(update_fields=['referrer'])
         # Отправка SMS-кода подтверждения
         sms_message = f"Ваш код подтверждения: {user.mycode}"
         playmobile_api = SendSmsWithPlayMobile(message=sms_message, phone=phone_number)
         sms_response = playmobile_api.send()
 
         if sms_response['status'] == SUCCESS:
-            return Response({'token': user.tokens()})
+            return Response({'token': user.tokens(), 'referrer_id': user.referrer_id})
         else:
             return Response({'error': 'Ошибка при отправке SMS-сообщения'})
 
@@ -127,6 +138,15 @@ class LoginView(APIView):
         else:
             return Response({'error': 'Неверные учетные данные.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+class UserReferralsList(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, pk):
+        user = CustomUser.objects.get(id=pk)
+        referrals = CustomUser.objects.filter(referrer=user)
+        serializer = UserSerializer(referrals, many=True, context={'request': request})
+        return Response(serializer.data)
 
 #
 # @action(['DELETE'], detail=False, permission_classes=[IsAuthenticated])
