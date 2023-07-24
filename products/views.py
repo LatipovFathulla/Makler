@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from django.utils.translation import activate
+import boto3
 
 from makler import settings
 from masters.models import MasterModel
@@ -438,8 +439,40 @@ class HouseImageDestroyView(DestroyAPIView):
         image = get_object_or_404(NewHouseImages, id=image_id, product_id=product_id)
 
         # delete the image from the storage
-        storage, path = image.images.storage, image.images.path
-        storage.delete(path)
+        # storage, path = image.images.storage, image.images.path
+        # print(path)
+        # storage.delete(path)
+
+        AWS_ACCESS_KEY_ID = 'AKIA4NHR35ZNGR4Q6X4P'
+        AWS_SECRET_ACCESS_KEY = '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'
+        AWS_REGION_NAME = 'eu-north-1'
+        BUCKET_NAME = 'makleluz-video-uploader'
+
+        s3 = boto3.resource('s3',
+                            aws_access_key_id=AWS_ACCESS_KEY_ID,
+                            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                            region_name=AWS_REGION_NAME)
+
+        file_path_on_s3 = image.images.url
+        # print(file_path_on_s3)
+        url = file_path_on_s3
+
+        start_index = url.find("API/")  # Находим индекс начала "/API/"
+        end_index = url.find("?")  # Находим индекс символа "?"
+
+        if start_index != -1 and end_index != -1:
+            file_path_on_s3 = url[start_index:end_index]  # Вырезаем строку между началом и концом
+            # print(file_path_on_s3)
+        else:
+            print("Ссылка не содержит подходящий формат.")
+        # print(file_path_on_s3)
+            # Файл существует, поэтому удаляем его
+        try:
+            obj = s3.Object(BUCKET_NAME, file_path_on_s3)
+            obj.delete()
+            print("Файл успешно удален с S3.")
+        except Exception as e:
+             print("Ошибка при удалении файла с S3:", e)
 
         # delete the image instance from the database
         image.delete()
