@@ -40,9 +40,8 @@ class UserViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         phone_number = serializer.validated_data['phone_number']
         password = serializer.validated_data['password']
-        hashed_password = make_password(password)  # Хеширование пароля
+        hashed_password = make_password(password)
 
-        # Получение данных о реферрере (если ссылка предоставлена)
         referrer_id = request.query_params.get('referrer')
         referrer = None
         if referrer_id:
@@ -59,7 +58,11 @@ class UserViewSet(viewsets.GenericViewSet):
         if referrer:
             user.referrer = referrer
             user.save(update_fields=['referrer'])
-        # Отправка SMS-кода подтверждения
+
+            # Добавляем баллы пользователю X при успешной регистрации нового пользователя Y
+            user.referrer.score += 1
+            user.referrer.save(update_fields=['score'])
+
         sms_message = f"Ваш код подтверждения: {user.mycode}"
         playmobile_api = SendSmsWithPlayMobile(message=sms_message, phone=phone_number)
         sms_response = playmobile_api.send()

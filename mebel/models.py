@@ -18,7 +18,7 @@ class MebelCategoryModel(models.Model):
 
 class MebelModel(models.Model):
     creator = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='mebels',
-                                verbose_name=_('creator'), null=True)
+                                verbose_name=_('creator'), null=True, blank=True)
     title = models.CharField(max_length=400, verbose_name=_('title'))
     category = models.ForeignKey(MebelCategoryModel, on_delete=models.CASCADE,
                                  verbose_name=_('category'), null=True)

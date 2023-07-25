@@ -1,5 +1,7 @@
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel, \
     HouseImageModel, PriceListModel, HowSaleModel, NewHouseImages
@@ -20,11 +22,18 @@ class MyTranslationAdmin(TranslationAdmin):
 
 @admin.register(CategoryModel)
 class CategoryModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'created_at']
+    list_display = ['id', 'title', 'cat_image_tag', 'created_at']
     search_fields = ['id', 'title', 'created_at']
     list_filter = ['created_at']
     save_as = True
 
+    def cat_image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" height="60" />'.format(obj.image.url))
+        else:
+            return '-'
+
+    cat_image_tag.short_description = _('Image')
 
 @admin.register(HowSaleModel)
 class HowSaleModelAdmin(admin.ModelAdmin):
@@ -35,11 +44,18 @@ class HowSaleModelAdmin(admin.ModelAdmin):
 
 @admin.register(AmenitiesModel)
 class AmenitiesModelAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'created_at']
+    list_display = ['id', 'title', 'amenities_image_tag', 'created_at']
     search_fields = ['title', 'created_at']
     list_filter = ['created_at']
     save_as = True
 
+    def amenities_image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" height="60" />'.format(obj.image.url))
+        else:
+            return '-'
+
+    amenities_image_tag.short_description = _('Image')
 
 @admin.register(PriceListModel)
 class PriceListModelAdmin(admin.ModelAdmin):
@@ -65,9 +81,18 @@ class NewHouseImagesInline(admin.TabularInline):
 
 @admin.register(HouseModel)
 class HouseModelAdmin(MyTranslationAdmin):
-    list_display = ['pk', 'title', 'price', 'category', 'type', 'product_status', 'created_at']
+    list_display = ['pk', 'title', 'price', 'house_image_tag', 'category', 'type', 'product_status', 'created_at']
     search_fields = ['title', 'type']
     list_filter = ['created_at']
     inlines = [NewHouseImagesInline]
     save_as = True
     save_on_top = True
+
+    def house_image_tag(self, obj):
+        first_image = obj.images.first()  # Получаем первое изображение продукта из связанной модели
+        if first_image:
+            return format_html('<img src="{}" height="60" />'.format(first_image.images.url))
+        else:
+            return '-'
+
+    house_image_tag.short_description = _('Image')
