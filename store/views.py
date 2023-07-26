@@ -9,10 +9,11 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from products.utils import get_wishlist_data
-from .models import StoreModel, HowStoreServiceModel, UseForModel, StoreBrandModel
+from .models import StoreModel, HowStoreServiceModel, UseForModel, StoreBrandModel, StoreAmenities
 from rest_framework.response import Response
 from .serializers import StoreModelSerializer, UpdateStoreModelSerializer, HowStoreServiceModelSerializer, \
-    UseForModelSerializer, ALLStoreModelSerializer, StoreBrandModelSerializer, PatchStoreUpdateModelSerializer
+    UseForModelSerializer, ALLStoreModelSerializer, StoreBrandModelSerializer, PatchStoreUpdateModelSerializer, \
+    StoreAmenitiesSerializer
 
 
 class StoreModelAPIView(generics.ListAPIView):
@@ -98,6 +99,10 @@ class StoreDestroyAPIView(mixins.DestroyModelMixin, GenericViewSet):
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
+
+class StoreAmenititesAPIView(generics.ListAPIView):
+    queryset = StoreAmenities.objects.all()
+    serializer_class = StoreAmenitiesSerializer
 
 class UseForModelSerializerAPIView(generics.ListAPIView):
     queryset = UseForModel.objects.all()

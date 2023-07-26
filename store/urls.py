@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import StoreAddCreateAPIView, StoreUpdateAPIView, StoreDestroyAPIView, StoreModelAPIView, \
     StoreDetailAPIView, SearchStoreModelAPIView, RandomStoreModelAPIView, UseForModelSerializerAPIView, \
-    HowStoreServiceModelSerializerAPIView, StoreBrandAPIView, StorePatchUpdateAPIView
+    HowStoreServiceModelSerializerAPIView, StoreBrandAPIView, StorePatchUpdateAPIView, StoreAmenititesAPIView
 
 router = DefaultRouter()
 router.register(r'api/v1/store/create', StoreAddCreateAPIView)
@@ -12,6 +12,7 @@ router.register(r'api/v1/store/delete', StoreDestroyAPIView)
 
 urlpatterns = [
     path('api/v1/store/', StoreModelAPIView.as_view()),
+    path('api/v1/store/amenitites', StoreAmenititesAPIView.as_view()),
     path('api/v1/store/brands', StoreBrandAPIView.as_view()),
     path('api/v1/store/use_for', UseForModelSerializerAPIView.as_view()),
     path('api/v1/store/how_store', HowStoreServiceModelSerializerAPIView.as_view()),
