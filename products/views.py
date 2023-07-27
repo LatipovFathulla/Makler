@@ -110,21 +110,24 @@ class WebHouseListAPIView(generics.ListAPIView):
 # web create Home
 
 class WebHomeListAPIView(ListAPIView):
-    queryset = HouseModel.objects.all()
     serializer_class = NewAllWebHomeCreateSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['product_status', 'object', 'building_type', 'number_of_rooms',
-                        'type', 'rental_type']
-
+    filterset_fields = ['object', 'building_type', 'number_of_rooms', 'type', 'rental_type']
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
+
+    def get_queryset(self):
+        # Фильтруем продукты по product_status = 1 ('PUBLISH')
+        return HouseModel.objects.filter(product_status=1)
 
     def list(self, request, *args, **kwargs):
         language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         if language:
             activate(language)
 
-        return super().list(request, *args, **kwargs)
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     # def get_queryset(self):
     #     queryset = self.queryset

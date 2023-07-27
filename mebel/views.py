@@ -25,6 +25,9 @@ class MebelListAPIView(generics.ListAPIView):
     filterset_fields = ['category']
     search_fields = ['web_address_title']
 
+    def get_queryset(self):
+        # Фильтруем продукты по product_status = 1 ('PUBLISH')
+        return MebelModel.objects.filter(product_status=1)
 
 class RandomMebelListAPIView(generics.ListAPIView):
     queryset = MebelModel.objects.order_by('?')

@@ -22,6 +22,9 @@ class StoreModelAPIView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['use_for', 'how_store_service', 'brand_title']
 
+    def get_queryset(self):
+        # Фильтруем продукты по product_status = 1 ('PUBLISH')
+        return StoreModel.objects.filter(product_status=1)
 
 class StoreBrandAPIView(generics.ListAPIView):
     queryset = StoreBrandModel.objects.order_by('-pk')

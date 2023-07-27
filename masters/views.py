@@ -30,6 +30,10 @@ class MasterListAPIView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['profession', 'how_service']
 
+    def get_queryset(self):
+        # Фильтруем продукты по product_status = 1 ('PUBLISH')
+        return MasterModel.objects.filter(product_status=1)
+
 
 class APPMasterListAPIView(generics.ListAPIView):
     ''' Masters '''
