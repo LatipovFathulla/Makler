@@ -127,7 +127,13 @@ class WebHomeListAPIView(ListAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        data = {
+            "count": len(queryset),
+            "next": None,
+            "previous": None,
+            "results": serializer.data
+        }
+        return Response(data)
 
     # def get_queryset(self):
     #     queryset = self.queryset
