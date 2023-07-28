@@ -115,6 +115,8 @@ class WebHomeListAPIView(ListAPIView):
     filterset_fields = ['object', 'building_type', 'number_of_rooms', 'type', 'rental_type']
     search_fields = ['title', 'web_address_title']
     ordering_fields = ['id', 'price', 'created_at']
+    pagination_class = PageNumberPagination
+
 
     def get_queryset(self):
         # Фильтруем продукты по product_status = 1 ('PUBLISH')
@@ -126,14 +128,15 @@ class WebHomeListAPIView(ListAPIView):
             activate(language)
 
         queryset = self.filter_queryset(self.get_queryset())
+
+        # Применяем пагинацию к результатам
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(queryset, many=True)
-        data = {
-            "count": len(queryset),
-            "next": None,
-            "previous": None,
-            "results": serializer.data
-        }
-        return Response(data)
+        return Response(serializer.data)
 
     # def get_queryset(self):
     #     queryset = self.queryset
