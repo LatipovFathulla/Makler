@@ -28,7 +28,7 @@ class MasterListAPIView(ListAPIView):
     ''' Masters '''
     queryset = MasterModel.objects.order_by('pk')
     serializer_class = MasterSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['profession', 'how_service']
     search_fields = ['name']
 

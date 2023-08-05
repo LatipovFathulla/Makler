@@ -20,7 +20,7 @@ from .serializers import StoreModelSerializer, UpdateStoreModelSerializer, HowSt
 class StoreModelAPIView(ListAPIView):
     queryset = StoreModel.objects.order_by('-pk')
     serializer_class = ALLStoreModelSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['use_for', 'how_store_service', 'brand_title']
     search_fields = ['name']
 
