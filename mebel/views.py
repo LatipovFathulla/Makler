@@ -18,12 +18,12 @@ class MebelCategoryListAPIView(generics.ListAPIView):
     serializer_class = MebelCategorySerializer
 
 
-class MebelListAPIView(generics.ListAPIView):
+class MebelListAPIView(ListAPIView):
     queryset = MebelModel.objects.order_by('pk')
     serializer_class = AllMebelSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['category']
-    search_fields = ['web_address_title']
+    search_fields = ['title', 'web_address_title']
 
     def get_queryset(self):
         # Фильтруем продукты по product_status = 1 ('PUBLISH')

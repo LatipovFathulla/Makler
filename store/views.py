@@ -7,6 +7,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.generics import ListAPIView
 
 from products.utils import get_wishlist_data
 from .models import StoreModel, HowStoreServiceModel, UseForModel, StoreBrandModel, StoreAmenities
@@ -16,11 +17,12 @@ from .serializers import StoreModelSerializer, UpdateStoreModelSerializer, HowSt
     StoreAmenitiesSerializer
 
 
-class StoreModelAPIView(generics.ListAPIView):
+class StoreModelAPIView(ListAPIView):
     queryset = StoreModel.objects.order_by('-pk')
     serializer_class = ALLStoreModelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['use_for', 'how_store_service', 'brand_title']
+    search_fields = ['name']
 
     def get_queryset(self):
         # Фильтруем продукты по product_status = 1 ('PUBLISH')
