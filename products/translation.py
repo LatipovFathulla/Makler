@@ -1,13 +1,21 @@
-from turtle import title
-
 from modeltranslation.translator import register, TranslationOptions
 
-from products.models import HouseModel, CategoryModel
+from products.models import HouseModel, CategoryModel, AmenitiesModel, HowSaleModel
 
 
 @register(CategoryModel)
 class CategoryTranslationOptions(TranslationOptions):
     fields = ['title', 'subtitle']
+
+
+@register(AmenitiesModel)
+class AmenitiesModelTranslationOptions(TranslationOptions):
+    fields = ['title']
+
+
+@register(HowSaleModel)
+class HowSaleModelTranslationOptions(TranslationOptions):
+    fields = ['title']
 
 
 @register(HouseModel)

@@ -7,17 +7,17 @@ from store.models import StoreModel, StoreAmenities, UseForModel, HowStoreServic
 
 @admin.register(StoreAmenities)
 class StoreAmenities(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
+    list_display = ['pk', 'title', 'created_at']
 
 
 @admin.register(UseForModel)
 class UseForModelAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
+    list_display = ['pk', 'title', 'created_at']
 
 
 @admin.register(HowStoreServiceModel)
 class HowStoreServiceModelAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
+    list_display = ['pk', 'title', 'created_at']
 
 
 @admin.register(StoreBrandModel)

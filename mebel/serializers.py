@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from modeltranslation.utils import get_language
 from mebel.models import MebelCategoryModel, MebelModel, NewMebelImages
 from products.serializers import PriceListSerializer
 
@@ -8,6 +9,9 @@ class MebelCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MebelCategoryModel
         fields = '__all__'
+
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
 
 
 class MebelImageSerializer(serializers.ModelSerializer):
@@ -32,6 +36,8 @@ class AllMebelSerializer(serializers.ModelSerializer):
         model = MebelModel
         fields = '__all__'
         extra_kwargs = {"creator": {"read_only": True}}
+
+    localized_fields = ['title', 'descriptions', 'web_address_title']
 
 
 class UpdateAllMebelSerializer(serializers.ModelSerializer):

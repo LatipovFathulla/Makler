@@ -52,6 +52,13 @@ class AmenitiesListAPIView(generics.ListAPIView):
     queryset = AmenitiesModel.objects.order_by('pk')
     serializer_class = AmenitiesSerializer
 
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 8
@@ -122,11 +129,13 @@ class WebHomeListAPIView(ListAPIView):
         # Фильтруем продукты по product_status = 1 ('PUBLISH')
         return HouseModel.objects.filter(product_status=1)
 
-    def list(self, request, *args, **kwargs):
+    def set_language(self, request):
         language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         if language:
             activate(language)
 
+    def list(self, request, *args, **kwargs):
+        self.set_language(request)
         queryset = self.filter_queryset(self.get_queryset())
 
         # Применяем пагинацию к результатам

@@ -1,22 +1,17 @@
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, mixins, status
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import SearchFilter
-from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.generics import ListAPIView
-from rest_framework.authentication import TokenAuthentication
 
 from products.utils import get_wishlist_data
-from user.models import CustomUser
+from django.utils.translation import activate
 from user.views import premium_required
 from .models import MasterModel, MasterUserWishlistModel, MasterProfessionModel, HowServiceModel
 from .serializers import MasterSerializer, MasterDetailSerializer, MasterCreateSerializer, \
@@ -237,7 +232,21 @@ class MasterProfessionListAPIView(generics.ListAPIView):
     queryset = MasterProfessionModel.objects.all()
     serializer_class = MasterProfessionSerializer
 
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
+
 
 class MasterFiltersListAPIView(generics.ListAPIView):
     queryset = HowServiceModel.objects.all()
     serializer_class = HowServiceModelSerializer
+
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)

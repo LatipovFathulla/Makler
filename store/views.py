@@ -10,6 +10,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.generics import ListAPIView
 
 from products.utils import get_wishlist_data
+from django.utils.translation import activate
 from .models import StoreModel, HowStoreServiceModel, UseForModel, StoreBrandModel, StoreAmenities
 from rest_framework.response import Response
 from .serializers import StoreModelSerializer, UpdateStoreModelSerializer, HowStoreServiceModelSerializer, \
@@ -24,9 +25,16 @@ class StoreModelAPIView(ListAPIView):
     filterset_fields = ['use_for', 'how_store_service', 'brand_title']
     search_fields = ['name']
 
+    def set_language(self, request):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
     def get_queryset(self):
+        self.set_language(self.request)  # Устанавливаем язык на основе HTTP_ACCEPT_LANGUAGE
         # Фильтруем продукты по product_status = 1 ('PUBLISH')
         return StoreModel.objects.filter(product_status=1)
+
 
 class StoreBrandAPIView(generics.ListAPIView):
     queryset = StoreBrandModel.objects.order_by('-pk')
@@ -109,11 +117,33 @@ class StoreAmenititesAPIView(generics.ListAPIView):
     queryset = StoreAmenities.objects.all()
     serializer_class = StoreAmenitiesSerializer
 
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
+
+
 class UseForModelSerializerAPIView(generics.ListAPIView):
     queryset = UseForModel.objects.all()
     serializer_class = UseForModelSerializer
+
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
 
 
 class HowStoreServiceModelSerializerAPIView(generics.ListAPIView):
     queryset = HowStoreServiceModel.objects.all()
     serializer_class = HowStoreServiceModelSerializer
+
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)

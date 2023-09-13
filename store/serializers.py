@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
 
-from user.models import CustomUser
+from modeltranslation.utils import get_language
 from .models import StoreModel, StoreAmenities, UseForModel, HowStoreServiceModel, StoreBrandModel
 
 
@@ -11,17 +10,26 @@ class StoreAmenitiesSerializer(serializers.ModelSerializer):
         model = StoreAmenities
         fields = ['id', 'title']
 
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
+
 
 class UseForModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UseForModel
         fields = ['id', 'title']
 
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
+
 
 class HowStoreServiceModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = HowStoreServiceModel
         fields = ['id', 'title']
+
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
 
 
 class UpdateStoreModelSerializer(serializers.ModelSerializer):

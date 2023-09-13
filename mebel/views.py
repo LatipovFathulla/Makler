@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 
+from django.utils.translation import activate
 from mebel.models import MebelCategoryModel, MebelModel
 from mebel.serializers import MebelCategorySerializer, MebelSerializer, AllMebelSerializer, UpdateAllMebelSerializer, \
     PatchUpdateAllMebelSerializer
@@ -17,6 +18,12 @@ class MebelCategoryListAPIView(generics.ListAPIView):
     queryset = MebelCategoryModel.objects.order_by('pk')
     serializer_class = MebelCategorySerializer
 
+    def list(self, request, *args, **kwargs):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
+        return super().list(request, *args, **kwargs)
 
 class MebelListAPIView(ListAPIView):
     queryset = MebelModel.objects.order_by('pk')
@@ -25,7 +32,13 @@ class MebelListAPIView(ListAPIView):
     filterset_fields = ['category']
     search_fields = ['title', 'web_address_title']
 
+    def set_language(self, request):
+        language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        if language:
+            activate(language)
+
     def get_queryset(self):
+        self.set_language(self.request)
         # Фильтруем продукты по product_status = 1 ('PUBLISH')
         return MebelModel.objects.filter(product_status=1)
 

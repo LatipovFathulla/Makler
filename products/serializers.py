@@ -27,6 +27,8 @@ class AmenitiesSerializer(serializers.ModelSerializer):
         model = AmenitiesModel
         fields = ['id', 'title', 'image', 'created_at']
 
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
 
 # web
 class WebAmenitiesSerializer(serializers.ModelSerializer):
@@ -264,6 +266,9 @@ class NewWebHowSaleSerializer(serializers.ModelSerializer):
         model = HowSaleModel
         fields = ['title']
 
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
+
 
 class HouseTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -304,7 +309,7 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HouseModel
-        fields = ['id', 'creator', 'title', 'title_uz', 'title_ru', 'descriptions', 'price', 'price_type',
+        fields = ['id', 'creator', 'title', 'descriptions', 'price', 'price_type',
                   'type', 'rental_type', 'property_type', 'object',
                   'web_address_title', 'web_address_latitude', 'web_address_longtitude',
                   'pm_general', 'pm_residential', 'images', 'uploaded_images',
@@ -315,10 +320,17 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
                   ]
 
     def get_link(self, obj):
-        return "https://makler-front.vercel.app/"
+        return "https://makler-uz.uz/"
+
+    localized_fields = ['title', 'descriptions', 'web_address_title']
+
+    def get_localized_field(self, obj, field_name):
+        return getattr(obj, f'{field_name}_{get_language()}') if get_language() != 'ru' else getattr(obj, field_name)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
+        for field_name in self.localized_fields:
+            ret[field_name] = self.get_localized_field(instance, field_name)
         ret['link'] = self.get_link(instance)
         return ret
 

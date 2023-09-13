@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from modeltranslation.utils import get_language
 from user.models import CustomUser
 from .models import MasterModel, MasterProfessionModel, MasterImagesModel, MasterUserWishlistModel, HowServiceModel
 
@@ -187,6 +188,8 @@ class MasterProfessionSerializer(serializers.ModelSerializer):
         model = MasterProfessionModel
         fields = ['id', 'title']
 
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
 
 # APP Master create
 class APPMasterCreateSerializer(serializers.ModelSerializer):
@@ -249,3 +252,6 @@ class HowServiceModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = HowServiceModel
         fields = ['id', 'title']
+
+    def get_title(self, obj):
+        return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')

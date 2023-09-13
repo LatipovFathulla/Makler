@@ -7,7 +7,7 @@ from mebel.models import MebelCategoryModel, MebelModel, NewMebelImages
 
 @admin.register(MebelCategoryModel)
 class CategoryModelAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'created_at']
+    list_display = ['pk', 'title', 'created_at']
     search_fields = ['title']
 
 
