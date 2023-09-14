@@ -82,9 +82,9 @@ class HouseModel(models.Model):
     price_type = models.ForeignKey(PriceListModel, on_delete=models.CASCADE, related_name='price_types', null=True,
                                    verbose_name=_('price_type'))
     ADD_TYPE = (
-        ('купить', 'Купить'),
-        ('продать', 'Продать'),
-        ('аденда', 'Аренда'),
+        ('купить', _('Купить')),
+        ('продать', _('Продать')),
+        ('аденда', _('Аренда')),
     )
     type = models.CharField(
         max_length=200,
@@ -107,9 +107,9 @@ class HouseModel(models.Model):
     pm_kitchen = models.CharField(max_length=300, verbose_name=_('pm_kitchens'), null=True)
     # web_building_type = models.CharField(max_length=600, verbose_name=_('web_building_type'), null=True)
     RENTAL_TYPE = (
-        ('длительно', 'Длительно'),
-        ('несколько месяцев', 'несколько месяцев'),
-        ('посуточно', 'посуточно')
+        ('длительно', _('Длительно')),
+        ('несколько месяцев', _('несколько месяцев')),
+        ('посуточно', _('посуточно'))
     )
     rental_type = models.CharField(
         max_length=200,
@@ -120,17 +120,17 @@ class HouseModel(models.Model):
         verbose_name=_("rental_type")
     )
     PROPERTY_TYPE = (
-        ('жилая', 'жилая'),
-        ('коммерческая', 'коммерческая')
+        ('жилая', _('жилая')),
+        ('коммерческая', _('коммерческая'))
     )
     OBJECT = (
-        ('квартира', 'квартиру'),
-        ('комната', 'комната'),
-        ('дача', 'дача'),
-        ('дома', 'дома'),
-        ('участка', 'участка'),
-        ('таунхаус', 'Townhouse'),
-        ('спальное', 'Bed_space')
+        ('квартира', _('квартиру')),
+        ('комната', _('комната')),
+        ('дача', _('дача')),
+        ('дома', _('дома')),
+        ('участка', _('участка')),
+        ('таунхаус', _('Townhouse')),
+        ('спальное', _('Bed_space'))
     )
     object = models.CharField(
         max_length=200,
@@ -155,10 +155,10 @@ class HouseModel(models.Model):
     floor = models.CharField(max_length=30, verbose_name=_('floor'))
     floor_from = models.CharField(max_length=30, verbose_name=_('floor_from'))
     BUILDING_TYPE = (
-        ('кирпич', 'кирпич'),
-        ('монолит', 'монолит'),
-        ('панель', 'панель'),
-        ('блочный', 'блочный')
+        ('кирпич', _('кирпич')),
+        ('монолит', _('монолит')),
+        ('панель', _('панель')),
+        ('блочный', _('блочный'))
     )
     building_type = models.CharField(
         max_length=50,

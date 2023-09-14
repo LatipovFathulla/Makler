@@ -292,20 +292,132 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
     amenities = WebAmenitiesSerializer(many=True)
     price_type = PriceListSerializer()
     how_sale = NewWebHowSaleSerializer()
-    type = HouseTypeSerializer
+    # type = HouseTypeSerializer
+    type = serializers.SerializerMethodField()
+    rental_type = serializers.SerializerMethodField()
+    property_type = serializers.SerializerMethodField()
+    object = serializers.SerializerMethodField()
+    building_type = serializers.SerializerMethodField()
     link = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
     descriptions = serializers.SerializerMethodField()
 
     # rental_type = HouseRentalTypeSerializer
 
-    # address = AddressSerializer()
 
     def get_title(self, obj):
         return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
 
     def get_descriptions(self, obj):
         return obj.descriptions if get_language() == 'ru' else getattr(obj, f'descriptions_{get_language()}')
+
+    def get_type(self, obj):
+        request = self.context.get('request')
+        accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем значение accept-language
+        type_mapping = {
+            'uz': {
+                'купить': 'Xarid qilish',  # Перевод для "купить" на узбекском языке
+                'продать': 'Sotish',  # Перевод для "купить" на узбекском языке
+                'аденда': 'Ijaraga berish',  # Перевод для "аренда" на узбекском языке
+            },
+            'ru': {
+                'купить': 'Купить',  # Перевод для "купить" на русском языке
+                'продать': 'Продать',  # Перевод для "купить" на русском языке
+                'аденда': 'Аренда',  # Перевод для "аренда" на русском языке
+            },
+        }
+
+        # Определите соответствие Accept-Language и значения type
+        type_translations = type_mapping.get(accept_language, {})
+        return type_translations.get(obj.type, obj.type)
+
+    def get_rental_type(self, obj):
+        request = self.context.get('request')
+        accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем значение accept-language
+        rental_type_mapping = {
+            'uz': {
+                'длительно': 'Uzoq mudatga',  # Перевод для "купить" на узбекском языке
+                'несколько месяцев': 'Bir necha oy',  # Перевод для "купить" на узбекском языке
+                'посуточно': 'Kunbay',  # Перевод для "аренда" на узбекском языке
+            },
+            'ru': {
+                'длительно': 'Длительно',  # Перевод для "купить" на русском языке
+                'несколько месяцев': 'Несколько месяце',  # Перевод для "купить" на русском языке
+                'посуточно': 'Посуточно',  # Перевод для "аренда" на русском языке
+            },
+        }
+
+        # Определите соответствие Accept-Language и значения type
+        rental_type_translations = rental_type_mapping.get(accept_language, {})
+        return rental_type_translations.get(obj.rental_type, obj.rental_type)
+
+    def get_property_type(self, obj):
+        request = self.context.get('request')
+        accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем значение accept-language
+        property_type_mapping = {
+            'uz': {
+                'жилая': 'yashash joyi',  # Перевод для "купить" на узбекском языке
+                'коммерческая': 'kochmas mulk',  # Перевод для "купить" на узбекском языке
+            },
+            'ru': {
+                'жилая': 'жилая',  # Перевод для "купить" на русском языке
+                'коммерческая': 'коммерческая',  # Перевод для "купить" на русском языке
+            },
+        }
+
+        # Определите соответствие Accept-Language и значения type
+        get_property_type_translations = property_type_mapping.get(accept_language, {})
+        return get_property_type_translations.get(obj.property_type, obj.property_type)
+
+    def get_object(self, obj):
+        request = self.context.get('request')
+        accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем значение accept-language
+        object_type_mapping = {
+            'uz': {
+                'квартира': 'kvartira',  # Перевод для "квартира" на узбекском языке
+                'комната': 'hona',  # Перевод для "комната" на узбекском языке
+                'дача': 'dacha',  # Перевод для "дача" на узбекском языке
+                'дома': 'domlar',  # Перевод для "дома" на узбекском языке
+                'участка': 'uchastka',  # Перевод для "участка" на узбекском языке
+                'таунхаус': 'Taunhaus',  # Перевод для "таунхаус" на узбекском языке
+                'спальное': 'Uhlash uchun',  # Перевод для "спальное" на узбекском языке
+            },
+            'ru': {
+                'квартира': 'квартира',  # Перевод для "квартира" на русском языке
+                'комната': 'комната',  # Перевод для "комната" на русском языке
+                'дача': 'дача',  # Перевод для "дача" на русском языке
+                'дома': 'дома',  # Перевод для "дома" на русском языке
+                'участка': 'участка',  # Перевод для "участка" на русском языке
+                'таунхаус': 'Townhouse',  # Перевод для "таунхаус" на русском языке
+                'спальное': 'Bed_space',  # Перевод для "спальное" на русском языке
+            },
+        }
+
+        # Определите соответствие Accept-Language и значения object
+        object_type_translations = object_type_mapping.get(accept_language, {})
+        return object_type_translations.get(obj.object, obj.object)
+
+    def get_building_type(self, obj):
+        request = self.context.get('request')
+        accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', 'ru')  # Получаем значение accept-language
+        building_type_mapping = {
+            'uz': {
+                'кирпич': 'gisht',  # Перевод для "квартира" на русском языке
+                'монолит': 'monolit',  # Перевод для "комната" на русском языке
+                'панель': 'panel',  # Перевод для "дача" на русском языке
+                'блочный': 'blok',  # Перевод для "дома" на русском языке
+            },
+            'ru': {
+                'кирпич': 'кирпич',  # Перевод для "квартира" на русском языке
+                'монолит': 'монолит',  # Перевод для "комната" на русском языке
+                'панель': 'панель',  # Перевод для "дача" на русском языке
+                'блочный': 'блочный',  # Перевод для "дома" на русском языке
+            },
+        }
+
+        # Определите соответствие Accept-Language и значения object
+        building_type_translations = building_type_mapping.get(accept_language, {})
+        return building_type_translations.get(obj.building_type, obj.building_type)
 
     class Meta:
         model = HouseModel
@@ -322,7 +434,7 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
     def get_link(self, obj):
         return "https://makler-uz.uz/"
 
-    localized_fields = ['title', 'descriptions', 'web_address_title']
+    localized_fields = ['title', 'descriptions']
 
     def get_localized_field(self, obj, field_name):
         return getattr(obj, f'{field_name}_{get_language()}') if get_language() != 'ru' else getattr(obj, field_name)
