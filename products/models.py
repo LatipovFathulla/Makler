@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from products.reasons import ALLOWED_REASONS
+
 
 class CategoryModel(models.Model):
     title = models.CharField(max_length=500, verbose_name=_('title'))
@@ -60,6 +62,46 @@ class HowSaleModel(models.Model):
         verbose_name = _('Как продавать')
         verbose_name_plural = _('Как продавать')
 
+class ComplaintModel(models.Model):
+    REASONS = (
+        ('Товар продан', 'Товар продан'),
+        ('Неверная цена', 'Неверная цена'),
+        ('Объявление было размещено более одного раза', 'Объявление было размещено более одного раза'),
+        ('Фото и информация в объявлении не совпадают', 'Фото и информация в объявлении не совпадают'),
+        ('Адрес неверный', 'Адрес неверный'),
+        ('Не могу сбросить звонок (звонки не отвечены)', 'Не могу сбросить звонок (звонки не отвечены)'),
+        ('Запрещенные товары', 'Запрещенные товары'),
+        ('Рекламодатель не является физическим лицом', 'Рекламодатель не является физическим лицом'),
+        ('Мошенничество', 'Мошенничество'),
+        ('Другая причина', 'Другая причина'),
+    )
+
+    reasons = models.CharField(max_length=255, choices=ALLOWED_REASONS, verbose_name=_('Причина'), null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.reasons or ''
+
+    class Meta:
+        verbose_name = _('Тексты жалоб')
+        verbose_name_plural = _('Тексты жалоб')
+
+
+
+
+class Complaint(models.Model):
+    reason = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, null=True, blank=True)
+    other_reason = models.TextField(blank=True, null=True, verbose_name=_('Другая причина'))
+    user = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
+    product = models.ForeignKey('HouseModel', on_delete=models.CASCADE, related_name='complaints_house', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        verbose_name = _('Жалобы')
+        verbose_name_plural = _('Жалобы')
+
+
 
 class HouseModel(models.Model):
     creator = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='houses', null=True,
@@ -71,11 +113,7 @@ class HouseModel(models.Model):
     view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view count'), )
     descriptions = models.TextField(verbose_name=_('descriptions'))
     price = models.CharField(max_length=100, verbose_name=_('price'))
-    # app_currency = models.CharField(max_length=10, verbose_name=_('app_currency'), null=True)
-    # app_type = models.CharField(max_length=80, verbose_name=_('app_type'), null=True)
-    # typeOfRent = models.CharField(max_length=90, verbose_name=_('typeOfRent'), null=True)
-    # typeOfHouse = models.CharField(max_length=90, verbose_name=_('typeOfHouse'), null=True)
-    # typeOfObject = models.CharField(max_length=90, null=True)
+    complaints = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='house_complaints', null=True, blank=True)
     app_ipoteka = models.BooleanField(default=False, null=True, verbose_name=_('app_ipoteka'))
     app_mebel = models.BooleanField(default=False, null=True, verbose_name=_('app_mebel'))
     app_new_building = models.BooleanField(default=False, null=True, verbose_name=_('app_new_building'))

@@ -21,17 +21,18 @@ from store.models import StoreModel
 from store.serializers import ProfileStoreModelSerializer
 from user.models import CustomUser
 from user.serializers import UserProductsSerializer
-from .models import PriceListModel, UserWishlistModel, NewHouseImages
+from .models import PriceListModel, UserWishlistModel, NewHouseImages, Complaint, ComplaintModel
 from rest_framework.decorators import api_view
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel
 from products.serializers import CategorySerializer, HomeSerializer, AmenitiesSerializer, \
     HomeCreateSerializer, \
     WebAmenitiesSerializer, NewHomeCreateSerializer, WebPriceSerializer, NewWebHomeCreateSerializer, \
-    NewAllWebHomeCreateSerializer, APPHomeCreateSerializer, UserWishlistModelSerializer, \
+    NewAllWebHomeCreateSerializer, UserWishlistModelSerializer, \
     GetUserWishlistModelSerializer, HomeUpdatePatchSerializer, HomeAddSerializer, ProductLinkSerializer, \
-    HomeFilterNumberSerializer, HomeFilterObjectSerializer
+    HomeFilterNumberSerializer, HomeFilterObjectSerializer, ComplaintSerializer, ComplaintCreateSerializer
 from products.utils import get_wishlist_data
+from .reasons import ALLOWED_REASONS
 
 
 class CategoryListAPIView(generics.ListAPIView):
@@ -124,7 +125,6 @@ class WebHomeListAPIView(ListAPIView):
     ordering_fields = ['id', 'price', 'created_at']
     pagination_class = PageNumberPagination
 
-
     def get_queryset(self):
         # Фильтруем продукты по product_status = 1 ('PUBLISH')
         return HouseModel.objects.filter(product_status=1)
@@ -152,6 +152,18 @@ class WebHomeListAPIView(ListAPIView):
     #     change_model_field.delay()
     #     return queryset
 
+
+class ComplaintReasonsListView(APIView):
+    def get(self, request):
+        complaints = ComplaintModel.objects.all()
+        serialized_data = [{'id': complaint.pk, 'reason': complaint.reasons} for complaint in complaints]
+        return Response(serialized_data)
+
+
+class ComplaintCreateView(generics.CreateAPIView):
+    serializer_class = ComplaintCreateSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Complaint.objects.all()
 
 # class ArchiveProductListView(ListAPIView):
 #     serializer_class = NewAllWebHomeCreateSerializer
@@ -190,31 +202,6 @@ class ArchiveProductListView(APIView):
         return Response(response_data)
 
 
-# class ArchiveProductListView(generics.ListAPIView):
-#     serializer_class = NewAllWebHomeCreateSerializer
-#     permission_classes = [IsAuthenticated, ]
-#
-#     def get_queryset(self):
-#         user = self.request.user
-#         return HouseModel.objects.filter(product_status=3, creator=user)
-# def get(self, request, *args, **kwargs):
-#     houses = HouseModel.objects.filter(product_status=3)
-#     maklers = MasterModel.objects.filter(product_status=3)
-#     stores = StoreModel.objects.filter(product_status=3)
-#     mebels = MebelModel.objects.filter(product_status=3)
-#
-#     serialized_data = UserProductsSerializer({
-#         'houses': houses,
-#         'maklers': maklers,
-#         'stores': stores,
-#         'mebels': mebels,
-#     }, context={'request': request})
-#
-#     return Response(serialized_data.data)
-# def get_queryset(self):
-#     return HouseModel.objects.filter(product_status=3)
-
-
 class SearchWebHomeListAPIView(ListAPIView):
     queryset = HouseModel.objects.all()
     serializer_class = NewAllWebHomeCreateSerializer
@@ -227,33 +214,6 @@ class WebHomeCreateView(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = NewWebHomeCreateSerializer
     pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated, ]
-
-    # def create(self, validated_data):
-    #     targetDef = validated_data.pop(targetDefn)
-    #
-    #
-    #     #save the objects into its respective models.
-    #     targetDefId = TargetDefination.objects.create(**targetDef)
-    #
-    #     #get the objects of roleId and empID
-    #     role = list(validated_data['roleId'].items())
-    #     role_id = Role.objects.get(roleName =role[0][1])
-    #     emp_id = Employee.objects.get(pk=validated_data['empId']['id'])
-    #
-    #     target_obj = Target.object.create(targetDef=targetDefId, roleId=role_id, empID=emp_id, startDate=validated_data['startDate'], endDate=validated_data['endDate'], value=validated_data['value'])
-    #
-    #     return target_obj
-
-    # def create(self, validated_data):
-    #
-
-    # uv = PriceListModel(price=str(request.data['price_type']))
-    # serializer = self.serializer_class(uv, data=request.data)
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    # else:
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # web
@@ -314,16 +274,6 @@ class WishlistHouseDetailAPIView(mixins.UpdateModelMixin, GenericViewSet):
 class HouseAddCreateAPIView(generics.CreateAPIView):
     queryset = HouseModel.objects.all()
     serializer_class = NewHomeCreateSerializer
-    pagination_class = StandardResultsSetPagination
-    search_fields = ['title', 'description']
-
-    def get_serializer_context(self):
-        return {'request': self.request}
-
-
-class APPHouseAddCreateAPIView(generics.CreateAPIView):
-    queryset = HouseModel.objects.all()
-    serializer_class = APPHomeCreateSerializer
     pagination_class = StandardResultsSetPagination
     search_fields = ['title', 'description']
 
@@ -418,21 +368,6 @@ class WishlistUserHouseDetailAPIView(APIView):
 
         return Response(response_data)
 
-    # def get_queryset(self, *args, **kwargs):
-    #     return (
-    #         super()
-    #             .get_queryset(*args, **kwargs)
-    #             .filter(user_id=self.kwargs.get('pk'))
-    #     )
-
-    # def get(self, request, pk):
-    #     # pk = self.kwargs.get("pk")
-    #     houses = UserWishlistModel.objects.filter(user_id=pk)
-    #     serializer = UserWishlistModelSerializer(houses, many=True)
-    #     return Response(serializer.data)
-
-    # def delete(self, request, pk):
-
 
 class GetHouseFavListAPIView(generics.ListAPIView):
     ''' Fav (Houses)'''
@@ -487,13 +422,13 @@ class HouseImageDestroyView(DestroyAPIView):
         else:
             print("Ссылка не содержит подходящий формат.")
         # print(file_path_on_s3)
-            # Файл существует, поэтому удаляем его
+        # Файл существует, поэтому удаляем его
         try:
             obj = s3.Object(BUCKET_NAME, file_path_on_s3)
             obj.delete()
             print("Файл успешно удален с S3.")
         except Exception as e:
-             print("Ошибка при удалении файла с S3:", e)
+            print("Ошибка при удалении файла с S3:", e)
 
         # delete the image instance from the database
         image.delete()

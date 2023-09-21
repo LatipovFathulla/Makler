@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from products.models import CategoryModel, HouseModel, AmenitiesModel, \
-    HouseImageModel, PriceListModel, HowSaleModel, NewHouseImages
+    HouseImageModel, PriceListModel, HowSaleModel, NewHouseImages, Complaint, ComplaintModel
 
 
 class MyTranslationAdmin(TranslationAdmin):
@@ -73,6 +73,15 @@ class PriceListModelAdmin(admin.ModelAdmin):
 # @admin.register(NewHouseImages)
 # class NewHouseImagesAdmin(admin.ModelAdmin):
 #     list_display = ['pk', 'product', 'images']
+@admin.register(ComplaintModel)
+class ComplaintModelAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'reasons']
+
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ['user', 'reason', 'created_at']
+    list_filter = ['reason']
+    search_fields = ['user__username', 'reason', 'created_at']
 
 class NewHouseImagesInline(admin.TabularInline):
     model = NewHouseImages

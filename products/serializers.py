@@ -4,7 +4,7 @@ import os
 
 from makler import settings
 from products.models import CategoryModel, HouseModel, AmenitiesModel, HouseImageModel, ImagesModel, \
-    NewHouseImages, PriceListModel, HowSaleModel, UserWishlistModel
+    NewHouseImages, PriceListModel, HowSaleModel, UserWishlistModel, Complaint, ComplaintModel
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -29,6 +29,7 @@ class AmenitiesSerializer(serializers.ModelSerializer):
 
     def get_title(self, obj):
         return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
+
 
 # web
 class WebAmenitiesSerializer(serializers.ModelSerializer):
@@ -68,94 +69,43 @@ class ImageSerializer(serializers.ModelSerializer):
         return self.context['request'].build_absolute_url(obj.image.url)
 
 
-class APPHomeCreateSerializer(serializers.ModelSerializer):
-    # address = AddressSerializer()
-    images = ImageSerializer(many=True, read_only=True)
-    uploaded_images = serializers.ListField(
-        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
-        write_only=True
-    )
+class ComplaintSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ComplaintModel
+        fields = ['pk', 'reasons']
+
+
+class ComplaintCreateSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    reason_id = serializers.IntegerField(required=False)
+    other_reason = serializers.CharField(required=False)
 
     class Meta:
-        model = HouseModel
-        fields = ['id', 'creator', 'title', 'descriptions', 'price', 'phone_number', 'app_currency', 'app_type',
-                  'typeOfRent',
-                  'typeOfHouse', 'rental_type', 'property_type',
-                  'typeOfObject', 'app_ipoteka', 'app_mebel', 'type', 'web_address_title', 'web_address_latitude',
-                  'web_address_longtitude', 'general', 'residential',
-                  'number_of_rooms', 'floor', 'floor_from', 'building_type', 'amenities', 'youtube_link',
-                  'images', 'uploaded_images', 'isBookmarked', 'draft', 'created_at',
-                  ]
-        extra_kwargs = {"creator": {"read_only": True}, "product_status": {"read_only": True}}
+        model = Complaint
+        fields = ['pk', 'reason', 'user', 'product']
 
     def create(self, validated_data):
-        title = validated_data.get('title')
-        descriptions = validated_data.get('descriptions')
-        price = validated_data.get('price')
-        phone_number = validated_data.get('phone_number')
-        app_currency = validated_data.get('app_currency')
-        app_type = validated_data.get('app_type')
-        typeOfRent = validated_data.get('typeOfRent')
-        typeOfHouse = validated_data.get('typeOfHouse')
-        typeOfObject = validated_data.get('typeOfObject')
-        app_ipoteka = validated_data.get('app_ipoteka')
-        app_mebel = validated_data.get('app_mebel')
-        rental_type = validated_data.get('rental_type')
-        property_type = validated_data.get('property_type')
-        type = validated_data.get('type')
-        web_address_title = validated_data.get('web_address_title')
-        web_address_latitude = validated_data.get('web_address_latitude')
-        web_address_longtitude = validated_data.get('web_address_longtitude')
-        general = validated_data.get('general')
-        residential = validated_data.get('residential')
-        number_of_rooms = validated_data.get('number_of_rooms')
-        floor = validated_data.get('floor')
-        floor_from = validated_data.get('floor_from')
-        building_type = validated_data.get('building_type')
-        uploaded_datas = validated_data.pop('uploaded_images')
-        youtube_link = validated_data.get('youtube_link')
-        creator = self.context['request'].user
-        amenities = validated_data.get('amenities')
-        titles = [i.title for i in amenities]
-        amenities_titles = AmenitiesModel.objects.filter(title__in=titles)
-        new_product = HouseModel.objects.create(
-            title=title,
-            creator=creator,
-            descriptions=descriptions,
-            price=price,
-            phone_number=phone_number,
-            app_currency=app_currency,
-            app_type=app_type,
-            typeOfRent=typeOfRent,
-            typeOfHouse=typeOfHouse,
-            typeOfObject=typeOfObject,
-            app_ipoteka=app_ipoteka,
-            app_mebel=app_mebel,
-            type=type,
-            rental_type=rental_type,
-            property_type=property_type,
-            web_address_title=web_address_title,
-            web_address_latitude=web_address_latitude,
-            web_address_longtitude=web_address_longtitude,
-            general=general,
-            residential=residential,
-            number_of_rooms=number_of_rooms,
-            floor=floor,
-            youtube_link=youtube_link,
-            floor_from=floor_from,
-            building_type=building_type,
-        )
-        new_product.amenities.add(*amenities_titles)
-        for q in uploaded_datas:
-            new_product_image = NewHouseImages.objects.create(product=new_product, images=q)
-        return new_product
+        reason_id = validated_data.get('reason_id')
+        other_reason = validated_data.get('other_reason')
+        user = self.context['request'].user
+        product_id = validated_data.get('product_id')
+        product = HouseModel.objects.get(pk=product_id)
 
-    def get_img_url(self, obj):
-        urls = []
-        for i in obj.images.all():
-            myurl = self.context['request'].build_absolute_uri(i.image.url)
-            urls.append(myurl)
-        return urls
+        if reason_id:
+            try:
+                reason = ComplaintModel.objects.get(pk=reason_id)
+            except ComplaintModel.DoesNotExist:
+                raise serializers.ValidationError('Invalid reason_id')
+        elif other_reason:
+            # Создаем экземпляр ComplaintModel для other_reason
+            reason = Complaint.objects.create(other_reason=other_reason)
+        else:
+            raise serializers.ValidationError('You must provide either reason_id or other_reason.')
+
+        # Создаем экземпляр Complaint с учетом reason или other_reason
+        complaint = Complaint.objects.create(reason=reason if reason_id else None, user=user, product=product,
+                                             other_reason=other_reason)
+        return complaint
 
 
 class NewHomeCreateSerializer(serializers.ModelSerializer):
@@ -303,7 +253,6 @@ class NewAllWebHomeCreateSerializer(serializers.ModelSerializer):
     descriptions = serializers.SerializerMethodField()
 
     # rental_type = HouseRentalTypeSerializer
-
 
     def get_title(self, obj):
         return obj.title if get_language() == 'ru' else getattr(obj, f'title_{get_language()}')
