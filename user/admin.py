@@ -11,6 +11,6 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_filter = ['score', 'phone_number', 'first_name']
     fieldsets = (
         (None, {
-            'fields': ('first_name', 'phone_number', 'score', 'referrer', 'mycode', 'is_premium', 'is_staff', 'is_active'),
+            'fields': ('first_name', 'phone_number', 'score', 'referrer', 'balance', 'mycode', 'is_premium', 'is_staff', 'is_active'),
         }),
     )

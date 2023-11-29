@@ -51,6 +51,7 @@ class CustomUser(AbstractUser):
     is_premium = models.BooleanField(default=False)
     referrer = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     score = models.IntegerField(default=0)
+    balance = models.IntegerField(default=0, null=True)
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
     objects = MyUserManager()

@@ -62,6 +62,7 @@ class HowSaleModel(models.Model):
         verbose_name = _('Как продавать')
         verbose_name_plural = _('Как продавать')
 
+
 class ComplaintModel(models.Model):
     REASONS = (
         ('Товар продан', 'Товар продан'),
@@ -76,7 +77,8 @@ class ComplaintModel(models.Model):
         ('Другая причина', 'Другая причина'),
     )
 
-    reasons = models.CharField(max_length=255, choices=ALLOWED_REASONS, verbose_name=_('Причина'), null=True, blank=True)
+    reasons = models.CharField(max_length=255, choices=ALLOWED_REASONS, verbose_name=_('Причина'), null=True,
+                               blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -87,20 +89,18 @@ class ComplaintModel(models.Model):
         verbose_name_plural = _('Тексты жалоб')
 
 
-
-
 class Complaint(models.Model):
     reason = models.ForeignKey(ComplaintModel, on_delete=models.CASCADE, null=True, blank=True)
     other_reason = models.TextField(blank=True, null=True, verbose_name=_('Другая причина'))
-    user = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
-    product = models.ForeignKey('HouseModel', on_delete=models.CASCADE, related_name='complaints_house', null=True, blank=True)
+    user = models.ForeignKey('user.CustomUser', on_delete=models.CASCADE, related_name='complaints', null=True,
+                             blank=True)
+    product = models.ForeignKey('HouseModel', on_delete=models.CASCADE, related_name='complaints_house', null=True,
+                                blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
 
     class Meta:
         verbose_name = _('Жалобы')
         verbose_name_plural = _('Жалобы')
-
 
 
 class HouseModel(models.Model):
@@ -113,7 +113,8 @@ class HouseModel(models.Model):
     view_count = models.PositiveIntegerField(default=0, null=True, verbose_name=_('view count'), )
     descriptions = models.TextField(verbose_name=_('descriptions'))
     price = models.CharField(max_length=100, verbose_name=_('price'))
-    complaints = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='house_complaints', null=True, blank=True)
+    complaints = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='house_complaints', null=True,
+                                   blank=True)
     app_ipoteka = models.BooleanField(default=False, null=True, verbose_name=_('app_ipoteka'))
     app_mebel = models.BooleanField(default=False, null=True, verbose_name=_('app_mebel'))
     app_new_building = models.BooleanField(default=False, null=True, verbose_name=_('app_new_building'))
