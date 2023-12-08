@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 
 from carousel.views import CarouselModelAPIView, BannerADSModelAPIView
+from paycomuz.views import MerchantAPIView
 from .yasg import urlpatterns as doc_urls
 from rest_framework.routers import DefaultRouter
 
@@ -37,6 +38,7 @@ urlpatterns = [
     path('users/', include('user.urls')),
     path('products/', include('products.urls'), name='products'),
     path('mebel/', include('mebel.urls'), name='mebel'),
+    path('paycomuz/', MerchantAPIView.as_view()),
     path('authorization/', include('authorization.urls')),
     path('api/v1/categories/', CategoryListAPIView.as_view()),
     path('api/v1/amenities/', AmenitiesListAPIView.as_view()),

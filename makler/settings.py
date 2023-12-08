@@ -311,6 +311,14 @@ JAZZMIN_SETTINGS = {
     "language_chooser": True,
 }
 
+PAYCOM_SETTINGS = {
+    "KASSA_ID": "KASSA ID",  # token
+    "SECRET_KEY": "TEST KEY OR PRODUCTIN KEY",  # password
+    "ACCOUNTS": {
+        "KEY": "order_id"
+    }
+}
+
 try:
     from settings_local import *
 except ImportError:
