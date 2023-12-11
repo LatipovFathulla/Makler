@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'user',
     'store',
     'authorization',
-    'paycomuz',
 ]
 
 
