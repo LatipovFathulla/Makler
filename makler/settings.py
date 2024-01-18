@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'vgybuhji9u87g6yhu78g6f7tguyhfyugih'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'payme',
+    'user.apps.UserConfig',
 
     # installed apps
     'whitenoise.runserver_nostatic',
@@ -57,9 +59,9 @@ INSTALLED_APPS = [
     'products',
     'masters',
     'mebel',
-    'user',
     'store',
     'authorization',
+    'paymeuz'
 ]
 
 
@@ -97,23 +99,23 @@ WSGI_APPLICATION = 'makler.wsgi.application'
 
 # Database
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DB_PASS'),
-#         'HOST': config('DB_HOST'),
-#         'PORT': config('DB_PORT'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASS'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 
@@ -310,12 +312,13 @@ JAZZMIN_SETTINGS = {
     "language_chooser": True,
 }
 
-PAYCOM_SETTINGS = {
-    "KASSA_ID": "KASSA ID",  # token
-    "SECRET_KEY": "TEST KEY OR PRODUCTIN KEY",  # password
-    "ACCOUNTS": {
-        "KEY": "order_id"
-    }
+PAYME = {
+    'PAYME_ID': config("PAYME_ID"),
+    'PAYME_KEY': config("PAYME_KEY"),
+    'PAYME_URL': config("PAYME_URL"),
+    'PAYME_CALL_BACK_URL': config("PAYME_CALL_BACK_URL"),
+    'PAYME_MIN_AMOUNT': config("PAYME_MIN_AMOUNT"),
+    'PAYME_ACCOUNT': config("PAYME_ACCOUNT"),
 }
 
 try:

@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 
 from carousel.views import CarouselModelAPIView, BannerADSModelAPIView
+from paymeuz.call_back import PaymeCallBackAPIView
+from paymeuz.views import MyTestListAPIView
 from .yasg import urlpatterns as doc_urls
 from rest_framework.routers import DefaultRouter
 
@@ -44,6 +46,8 @@ urlpatterns = [
     path('api/v1/banner-ads/', BannerADSModelAPIView.as_view()),
     path('web/api/v1/web-amenities/', WebAmenitiesListAPIView.as_view()),
     path('web/api/v1/web-prices/', WebPriceListAPIView.as_view()),
+    path('payments/merchant/', PaymeCallBackAPIView.as_view()),
+    path('testpay/', MyTestListAPIView.as_view()),
     path('i18n/', include("django.conf.urls.i18n")),
 ]
 
